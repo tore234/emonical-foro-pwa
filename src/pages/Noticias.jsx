@@ -7,25 +7,35 @@ const tipsBase = [
   {
     id: 1,
     frase: "“Cuando sientas ansiedad, respira profundo y enfoca tu atención en el presente. La respiración es un ancla emocional.”",
-    autor: "Psic. Ana Torres",
+    autor: "Psic. Christian Daniel Garcia",
   },
   {
     id: 2,
     frase: "“Permítete sentir sin juzgarte. Las emociones no se controlan, se comprenden.”",
-    autor: "Mtro. Carlos Medina, Terapeuta cognitivo",
+    autor: "Psic. Christian Daniel Garcia",
   },
   {
     id: 3,
     frase: "“Dormir bien es cuidar tu mente. No subestimes el poder del descanso emocional.”",
-    autor: "Dra. Paulina Esquivel, Neuropsicóloga",
+    autor: "Psic. Christian Daniel Garcia",
   },
   {
     id: 4,
     frase: "“Escribir tus pensamientos ayuda a liberar tensión mental. Hazlo aunque no tenga sentido.”",
-    autor: "Lucía Gómez, Coach emocional",
+    autor: "Psic. Christian Daniel Garcia",
   },
   {
     id: 5,
+    frase: "“No compares tu proceso. Cada persona florece en su propio tiempo.”",
+    autor: "Emonical Bot 💫",
+  },
+  {
+    id: 6,
+    frase: "“No compares tu proceso. Cada persona florece en su propio tiempo.”",
+    autor: "Emonical Bot 💫",
+  },
+  {
+    id: 7,
     frase: "“No compares tu proceso. Cada persona florece en su propio tiempo.”",
     autor: "Emonical Bot 💫",
   },

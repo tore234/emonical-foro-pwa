@@ -3,6 +3,9 @@ import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
 
 export default defineConfig({
+  server: {
+    port: 3001, // ← Cambia este número al puerto que desees
+  },
   plugins: [
     react(),
     VitePWA({
