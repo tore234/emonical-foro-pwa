@@ -4,10 +4,9 @@ import Home from "./pages/Home";
 import Foro from "./pages/Foro";
 import Noticias from "./pages/Noticias";
 import Perfil from "./pages/Perfil";
-import Descubrir from "./pages/Descubrir"; // ✅ Asegúrate de tener esta página creada
+import Descubrir from "./pages/Descubrir";
 import { motion, AnimatePresence } from "framer-motion";
-import { useAuthState } from "react-firebase-hooks/auth";
-import { auth } from "./firebase";
+
 import {
   UserCircleIcon,
   HomeIcon,
@@ -19,18 +18,32 @@ import {
   SparklesIcon,
 } from "@heroicons/react/24/outline";
 
+import { useAuth } from "./context/AuthContext"; // 👈 usamos el contexto
+
 function App() {
-  const [user] = useAuthState(auth);
+  const { user, loadingAuth, logout } = useAuth(); // 👈 un solo origen de verdad
   const [menuOpen, setMenuOpen] = useState(false);
 
   const handleLogout = async () => {
     try {
-      await auth.signOut();
+      await logout();
       setMenuOpen(false);
     } catch (error) {
       console.error("Error al cerrar sesión:", error);
     }
   };
+
+  // Mientras Firebase decide si hay usuario o no
+  if (loadingAuth) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-[#B4C5F7] via-[#C5D4F5] to-[#CEEBF8]">
+        <div className="bg-white/80 px-5 py-4 rounded-2xl shadow-lg border border-white/60 text-sm text-gray-700 flex items-center gap-2">
+          <SparklesIcon className="h-5 w-5 text-[#B29DD9] animate-spin" />
+          Verificando sesión...
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-[#B4C5F7] via-[#C5D4F5] to-[#CEEBF8] text-[#2D2D2D] font-[Poppins] transition-all duration-300">
@@ -69,7 +82,7 @@ function App() {
             { to: "/descubrir", icon: SparklesIcon, label: "Descubrir" },
             { to: "/foro", icon: ChatBubbleBottomCenterTextIcon, label: "Foro" },
             { to: "/noticias", icon: NewspaperIcon, label: "Noticias" },
-            { to: "/perfil", icon: UserCircleIcon, label: "Perfil" },
+            { to: "/perfil", icon: UserCircleIcon, label: user ? "Perfil" : "Ingresar" },
           ].map(({ to, icon: Icon, label }) => (
             <Link
               key={to}
@@ -80,6 +93,22 @@ function App() {
               <span>{label}</span>
             </Link>
           ))}
+
+          {/* Chip de usuario + logout en desktop */}
+          {user && (
+            <div className="flex items-center gap-3 border-l border-gray-200 pl-4">
+              <span className="text-xs text-gray-600 max-w-[170px] truncate">
+                {user.displayName || user.email}
+              </span>
+              <button
+                onClick={handleLogout}
+                className="flex items-center gap-1 text-xs text-red-600 hover:text-red-800 transition"
+              >
+                <ArrowRightOnRectangleIcon className="h-4 w-4" />
+                Salir
+              </button>
+            </div>
+          )}
         </div>
       </motion.nav>
 
@@ -98,7 +127,7 @@ function App() {
               { to: "/descubrir", label: "Descubrir" },
               { to: "/foro", label: "Foro" },
               { to: "/noticias", label: "Noticias" },
-              { to: "/perfil", label: "Perfil" },
+              { to: "/perfil", label: user ? "Perfil" : "Ingresar" },
             ].map(({ to, label }) => (
               <Link
                 key={to}
@@ -119,7 +148,9 @@ function App() {
                 Cerrar sesión
               </button>
             ) : (
-              <span className="text-gray-500 italic">No has iniciado sesión</span>
+              <span className="text-gray-500 italic">
+                No has iniciado sesión
+              </span>
             )}
           </motion.div>
         )}
@@ -165,7 +196,9 @@ function App() {
             </button>
           </>
         ) : (
-          <span className="text-gray-500 italic">No has iniciado sesión</span>
+          <span className="text-gray-500 italic">
+            No has iniciado sesión
+          </span>
         )}
       </footer>
     </div>

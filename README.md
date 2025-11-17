@@ -1,16 +1,97 @@
-# React + Vite
+# Emonical Foro · PWA 💜
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Emonical Foro es una aplicación web progresiva (PWA) pensada para cuidar el bienestar emocional de las personas.  
+Permite compartir experiencias en un foro seguro, recibir respuestas de un bot empático y descubrir recursos sobre salud mental.
 
-Currently, two official plugins are available:
+> 🌐 Demo: https://emonical-foro-pwa.vercel.app/
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+---
 
-## React Compiler
+## ✨ Características principales
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- 🫧 **Foro emocional**  
+  Publica experiencias, dudas o pensamientos y recibe respuestas visualmente cuidadas.
 
-## Expanding the ESLint configuration
+- 🤖 **Emonical Bot integrado**  
+  El bot responde a tus publicaciones usando una API propia (`/chat` en tu backend de Render), con mensajes cálidos y acompañamiento emocional.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- 👤 **Autenticación con Firebase**  
+  - Correo y contraseña  
+  - Google  
+  - Modo invitado/anónimo  
+  Gestión de sesión y vista de perfil en la sección **Perfil**.
+
+- 💟 **Avatar emocional personalizable**  
+  El usuario puede elegir su **estado emocional** (ansiedad, estrés, enojo, tristeza, miedo, neutral) como avatar de perfil, usando las burbujas ilustradas de Emonical.
+
+- 📰 **Noticias & Tips de bienestar**  
+  - Tips diarios de psicólogo.  
+  - Noticias externas sobre salud mental.  
+  - Sección de videos relajantes y meditaciones guiadas.
+
+- 📱 **Sección “Descubrir App”**  
+  Presentación de la app móvil / AR, con mockups y botón para descargar el APK o instalar como PWA.
+
+- 📲 **Diseño responsive & PWA**  
+  - UI pensada para móvil primero.  
+  - Gradientes suaves, iconografía amigable y animaciones con Framer Motion.  
+  - Instalación como app en el dispositivo.
+
+---
+
+## 🧱 Stack Tecnológico
+
+- **Frontend**
+  - [React](https://react.dev/)
+  - [Vite](https://vitejs.dev/)
+  - [Tailwind CSS](https://tailwindcss.com/)
+  - [Framer Motion](https://www.framer.com/motion/)
+  - [Heroicons](https://heroicons.com/)
+
+- **Backend / Servicios**
+  - [Firebase Authentication](https://firebase.google.com/docs/auth)  
+  - [Firebase Firestore](https://firebase.google.com/docs/firestore) (posts del foro)
+  - API propia desplegada en Render (`/chat`) para la lógica del bot.
+
+- **Deploy**
+  - [Vercel](https://vercel.com/) para el frontend.
+
+---
+
+## 📂 Estructura del proyecto (simplificada)
+
+```bash
+src/
+  api/
+    forumAPI.js         # Llamadas al backend (bot / foro)
+    openaiClient.js     # Cliente para API de chat (backend)
+  assets/
+    emociones/          # Avatares emocionales (burbujas Emonical)
+  components/
+    Bot/
+      AutoReplyHandler.js
+      BotMessage.jsx
+      ChatBotService.js
+      WakeBotButton.jsx
+    Foro/
+      ForoForm.jsx       # Formulario de publicación + llamada al bot
+      ForoList.jsx       # Tarjetas de posts y respuestas
+    Noticias/
+      NoticiasCard.jsx
+      PsicologoCard.jsx
+    Usuario/
+      Login.jsx          # Login / registro / invitado
+      PerfilCard.jsx     # Tarjeta de perfil + selector de emoción
+    Links/
+      LinksCard.jsx
+    context/
+      AuthContext.jsx    # Contexto de autenticación Firebase
+  pages/
+    Home.jsx
+    Descubrir.jsx
+    Foro.jsx
+    Noticias.jsx
+    Perfil.jsx
+  firebase.js            # Configuración de Firebase
+  App.jsx
+  main.jsx

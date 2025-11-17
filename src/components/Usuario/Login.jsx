@@ -1,4 +1,6 @@
+// src/components/Usuario/Login.jsx
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { auth } from "../../firebase";
 import {
   GoogleAuthProvider,
@@ -14,21 +16,28 @@ import {
   UserIcon,
   ArrowRightOnRectangleIcon,
 } from "@heroicons/react/24/outline";
+import { useAuth } from "../../context/AuthContext";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [mode, setMode] = useState("login");
   const [loading, setLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
 
-  // Métodos de autenticación
+  const navigate = useNavigate();
+  const { user, logout } = useAuth();
+
   const handleGoogleLogin = async () => {
     const provider = new GoogleAuthProvider();
     try {
       setLoading(true);
+      setErrorMsg("");
       await signInWithPopup(auth, provider);
+      navigate("/perfil");
     } catch (error) {
-      alert("Error al iniciar sesión con Google");
+      console.error(error);
+      setErrorMsg("Error al iniciar sesión con Google.");
     } finally {
       setLoading(false);
     }
@@ -37,9 +46,12 @@ export default function Login() {
   const handleEmailLogin = async () => {
     try {
       setLoading(true);
+      setErrorMsg("");
       await signInWithEmailAndPassword(auth, email, password);
+      navigate("/perfil");
     } catch (error) {
-      alert("Error: " + error.message);
+      console.error(error);
+      setErrorMsg("No se pudo iniciar sesión. Revisa tu correo y contraseña.");
     } finally {
       setLoading(false);
     }
@@ -48,10 +60,12 @@ export default function Login() {
   const handleRegister = async () => {
     try {
       setLoading(true);
+      setErrorMsg("");
       await createUserWithEmailAndPassword(auth, email, password);
-      alert("Cuenta creada correctamente 🫶");
+      navigate("/perfil");
     } catch (error) {
-      alert("Error al registrar: " + error.message);
+      console.error(error);
+      setErrorMsg("Error al registrar la cuenta. Intenta con otro correo.");
     } finally {
       setLoading(false);
     }
@@ -60,9 +74,12 @@ export default function Login() {
   const handleAnonLogin = async () => {
     try {
       setLoading(true);
+      setErrorMsg("");
       await signInAnonymously(auth);
+      navigate("/perfil");
     } catch (error) {
-      alert("Error al acceder de forma anónima");
+      console.error(error);
+      setErrorMsg("Error al acceder de forma anónima.");
     } finally {
       setLoading(false);
     }
@@ -82,11 +99,24 @@ export default function Login() {
         transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
       />
 
-      {/* Contenido principal */}
       <div className="relative z-10">
-        <h2 className="text-3xl font-bold text-center text-[#2D2D2D] mb-6 tracking-tight">
+        {/* Aviso de sesión activa */}
+        {user && (
+          <div className="mb-4 p-3 rounded-2xl bg-[#F4F0FF]/80 border border-[#E0D7F8]/80 text-xs text-center text-gray-700">
+            Sesión activa como{" "}
+            <span className="font-semibold">
+              {user.email || "Invitado"}
+            </span>
+          </div>
+        )}
+
+        <h2 className="text-3xl font-bold text-center text-[#2D2D2D] mb-4 tracking-tight">
           {mode === "login" ? "Iniciar sesión" : "Crear cuenta"}
         </h2>
+
+        {errorMsg && (
+          <p className="text-xs text-red-500 text-center mb-3">{errorMsg}</p>
+        )}
 
         {/* Campos */}
         <div className="space-y-4">
@@ -119,7 +149,7 @@ export default function Login() {
           whileTap={{ scale: 0.97 }}
           onClick={mode === "login" ? handleEmailLogin : handleRegister}
           disabled={loading}
-          className="w-full mt-6 bg-gradient-to-r from-[#B29DD9] to-[#B4C5F7] text-white font-semibold py-2.5 rounded-xl shadow-[0_0_15px_rgba(178,157,217,0.3)] hover:shadow-[0_0_25px_rgba(178,157,217,0.45)] transition-all"
+          className="w-full mt-6 bg-gradient-to-r from-[#B29DD9] to-[#B4C5F7] text-white font-semibold py-2.5 rounded-xl shadow-[0_0_15px_rgba(178,157,217,0.3)] hover:shadow-[0_0_25px_rgba(178,157,217,0.45)] transition-all disabled:opacity-60"
         >
           {loading
             ? "Cargando..."
@@ -162,7 +192,7 @@ export default function Login() {
             whileHover={{ scale: 1.03 }}
             onClick={handleGoogleLogin}
             disabled={loading}
-            className="flex items-center justify-center w-full border py-2.5 rounded-xl bg-white/90 hover:bg-gray-50 shadow-sm transition"
+            className="flex items-center justify-center w-full border py-2.5 rounded-xl bg-white/90 hover:bg-gray-50 shadow-sm transition disabled:opacity-60"
           >
             <img
               src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
@@ -179,7 +209,7 @@ export default function Login() {
             whileHover={{ scale: 1.03 }}
             onClick={handleAnonLogin}
             disabled={loading}
-            className="flex items-center justify-center w-full border py-2.5 rounded-xl bg-[#CEEBF8]/60 hover:bg-[#C5D4F5]/60 transition"
+            className="flex items-center justify-center w-full border py-2.5 rounded-xl bg-[#CEEBF8]/60 hover:bg-[#C5D4F5]/60 transition disabled:opacity-60"
           >
             <UserIcon className="h-5 w-5 mr-2 text-[#2D2D2D]" />
             <span className="text-[#2D2D2D] font-medium">
@@ -188,16 +218,18 @@ export default function Login() {
           </motion.button>
         </div>
 
-        {/* Cerrar sesión */}
-        <div className="mt-5 text-center">
-          <button
-            onClick={() => auth.signOut()}
-            className="text-red-500 flex items-center justify-center mx-auto hover:text-red-700 transition"
-          >
-            <ArrowRightOnRectangleIcon className="h-5 w-5 mr-1" />
-            Cerrar sesión
-          </button>
-        </div>
+        {/* Cerrar sesión (solo si hay usuario) */}
+        {user && (
+          <div className="mt-5 text-center">
+            <button
+              onClick={logout}
+              className="text-red-500 flex items-center justify-center mx-auto hover:text-red-700 transition"
+            >
+              <ArrowRightOnRectangleIcon className="h-5 w-5 mr-1" />
+              Cerrar sesión
+            </button>
+          </div>
+        )}
       </div>
     </motion.div>
   );
