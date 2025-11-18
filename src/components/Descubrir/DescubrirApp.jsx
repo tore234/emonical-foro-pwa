@@ -1,3 +1,5 @@
+// src/components/Descubrir/DescubrirApp.jsx
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import {
   DevicePhoneMobileIcon,
@@ -6,80 +8,122 @@ import {
   ArrowDownTrayIcon,
 } from "@heroicons/react/24/solid";
 
+import mockHome from "../../assets/mockups/emonical_home.png";
+import mockEmociones from "../../assets/mockups/emonical_emociones.png";
+import mockChat from "../../assets/mockups/emonical_chat.png";
+import mockPerfil from "../../assets/mockups/emonical_perfil.png";
+
 const FEATURES = [
   {
     icon: HeartIcon,
-    title: "Crecimiento emocional",
-    text:
-      "Sesiones guiadas, respiración consciente y actividades breves para acompañarte día a día.",
+    title: "Crecimiento emocional ❤️",
+    text: "Sesiones guiadas, respiración consciente y actividades breves para acompañarte día a día.",
   },
   {
     icon: CubeTransparentIcon,
-    title: "Realidad Aumentada (AR)",
-    text:
-      "Explora entornos inmersivos que representan calma, energía o enfoque según cómo te sientas.",
+    title: "Realidad Aumentada (AR) ✨",
+    text: "Explora entornos inmersivos que representan calma, energía o enfoque según cómo te sientas.",
   },
   {
     icon: DevicePhoneMobileIcon,
-    title: "Lista para usar en tu teléfono",
-    text:
-      "Instálala como PWA desde el navegador o descarga el APK seguro, sin depender de Play Store.",
+    title: "Optimizada para tu móvil 📱",
+    text: "Instálala como PWA desde el navegador o descarga el APK seguro.",
   },
 ];
 
 const PREVIEWS = [
-  { src: "/assets/mockup1.png", alt: "Vista de pantalla principal de Emonical" },
-  { src: "/assets/mockup2.png", alt: "Ejercicio guiado de bienestar en Emonical" },
-  { src: "/assets/mockup3.png", alt: "Sección de seguimiento emocional en Emonical" },
+  { src: mockHome, alt: "Pantalla de inicio de Emonical AR" },
+  { src: mockEmociones, alt: "Pantalla para registrar emociones" },
+  { src: mockChat, alt: "Pantalla de chat con Emonical" },
+  { src: mockPerfil, alt: "Pantalla de perfil de usuario" },
 ];
 
+// 🎞️ Animación flotante
+const floatVariant = {
+  initial: { opacity: 0, y: 40, scale: 0.95 },
+  animate: (i) => ({
+    opacity: 1,
+    y: [0, -12, 0],
+    scale: 1,
+    rotate: [0, i % 2 === 0 ? -2 : 2, 0],
+    transition: {
+      opacity: { delay: i * 0.15, duration: 0.6 },
+      y: {
+        delay: 0.4 + i * 0.1,
+        duration: 4,
+        repeat: Infinity,
+        ease: "easeInOut",
+      },
+      rotate: {
+        delay: 0.4 + i * 0.1,
+        duration: 5,
+        repeat: Infinity,
+        ease: "easeInOut",
+      },
+    },
+  }),
+};
+
 export default function DescubrirApp() {
+
+  // ⭐ Cambio automático de imágenes
+  const [active, setActive] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setActive((prev) => (prev + 1) % PREVIEWS.length);
+    }, 3500);
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <section
       id="descubrir-app"
-      className="relative max-w-7xl mx-auto px-6 py-16 md:py-20 overflow-hidden"
+      className="relative max-w-7xl mx-auto px-6 py-20 overflow-hidden"
     >
-      {/* Fondo suave tipo aurora */}
+      {/* 🌈 Fondo Aurora Premium */}
       <motion.div
-        className="absolute inset-0 bg-gradient-to-br from-[#B4C5F7]/40 via-[#B29DD9]/30 to-[#CEEBF8]/40 blur-3xl opacity-70"
-        animate={{ opacity: [0.5, 0.85, 0.5] }}
-        transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
+        className="absolute inset-0 bg-gradient-to-br from-[#B7C8FF]/40 via-[#E6D9FF]/35 to-[#A9E1FF]/40 blur-3xl opacity-70"
+        animate={{ opacity: [0.4, 0.9, 0.4], scale: [1, 1.1, 1] }}
+        transition={{ duration: 12, repeat: Infinity }}
       />
 
-      {/* Halo detrás de los mockups */}
-      <div className="pointer-events-none absolute right-0 top-1/3 h-72 w-72 rounded-full bg-[#B29DD9]/40 blur-3xl opacity-60" />
+      {/* 💫 Halo dinámico */}
+      <motion.div
+        className="absolute top-1/3 right-0 w-80 h-80 rounded-full bg-[#C5B0FF]/40 blur-[120px]"
+        animate={{ x: [0, -18, 0], y: [0, 18, 0] }}
+        transition={{ duration: 14, repeat: Infinity }}
+      />
 
-      {/* Contenido principal: texto + mockups lado a lado */}
-      <div className="relative z-10 grid md:grid-cols-2 gap-12 items-center mb-16">
-        {/* Columna izquierda: texto */}
-        <div className="space-y-6">
+      {/* GRID principal */}
+      <div className="relative z-10 grid md:grid-cols-2 gap-14 items-center">
+
+        {/* ------------------ IZQUIERDA ------------------ */}
+        <div className="space-y-7">
+
+          {/* Badge */}
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="inline-flex items-center gap-2 rounded-full bg-white/70 px-4 py-1 text-xs font-semibold text-[#7356B8] shadow-sm border border-white/60"
+            transition={{ duration: 0.4 }}
+            className="inline-flex items-center gap-2 rounded-full bg-white/70 backdrop-blur-xl px-4 py-1 text-xs text-[#7A5FCF] font-semibold border border-white/50 shadow-sm"
           >
             <CubeTransparentIcon className="h-4 w-4" />
-            Bienestar + Realidad Aumentada + PWA
+            Bienestar + Realidad Aumentada + PWA ✨
           </motion.div>
 
-          {/* 👇 TÍTULO MEJORADO Y MÁS LEGIBLE */}
+          {/* Título */}
           <motion.h2
-            initial={{ opacity: 0, y: -10 }}
+            initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.1 }}
-            className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#22223B] leading-tight"
+            transition={{ duration: 0.6 }}
+            className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-[#1A1B2E] leading-tight tracking-tight"
           >
-            Descubre{" "}
-            <span className="relative inline-block">
-              {/* halo detrás del texto */}
-              <span
-                className="absolute inset-0 rounded-full bg-gradient-to-r from-[#B29DD9] to-[#C5D4F5] opacity-60 blur-sm"
-                aria-hidden="true"
-              />
-              {/* texto con buen contraste y sombra */}
-              <span className="relative px-1 text-[#31245A] drop-shadow-[0_2px_6px_rgba(0,0,0,0.25)]">
-                Emonical&nbsp;Móvil
+            Descubre
+            <span className="block mt-1 relative">
+              <span className="absolute inset-0 bg-gradient-to-r from-[#B29DD9] to-[#C5D4F5] blur-xl opacity-50 rounded-lg" />
+              <span className="relative bg-gradient-to-r from-[#B29DD9] to-[#C5D4F5] text-transparent bg-clip-text drop-shadow-lg">
+                Emonical Móvil 🌿
               </span>
             </span>
           </motion.h2>
@@ -87,105 +131,104 @@ export default function DescubrirApp() {
           <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 0.3 }}
-            className="text-gray-700 text-base md:text-lg leading-relaxed"
+            transition={{ delay: 0.2 }}
+            className="text-gray-700 text-lg leading-relaxed"
           >
-            Lleva tu bienestar emocional a cualquier lugar: ejercicios rápidos,
-            experiencias en realidad aumentada y acompañamiento amoroso desde tu
-            celular.
+            Tu espacio emocional en el bolsillo: emociones, AR, chat terapéutico
+            y herramientas de bienestar que crecen contigo 💜
           </motion.p>
 
-          {/* Features como lista compacta */}
+          {/* CARACTERÍSTICAS */}
           <div className="grid gap-4">
-            {FEATURES.map((card) => {
-              const Icon = card.icon;
-              return (
-                <div
-                  key={card.title}
-                  className="flex gap-3 items-start rounded-2xl bg-white/75 border border-white/60 px-4 py-3 shadow-sm"
-                >
-                  <div className="mt-0.5 flex h-9 w-9 items-center justify-center rounded-xl bg-[#F3EEFF]">
-                    <Icon className="h-5 w-5 text-[#B29DD9]" />
-                  </div>
-                  <div>
-                    <h3 className="text-sm font-semibold text-[#2D2D2D]">
-                      {card.title}
-                    </h3>
-                    <p className="text-xs text-gray-600 leading-relaxed">
-                      {card.text}
-                    </p>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-
-          {/* Botón principal */}
-          <div className="pt-2">
-            <motion.a
-              href="/emonical.apk"
-              download
-              aria-label="Descargar APK de Emonical"
-              whileHover={{ scale: 1.04, translateY: -1 }}
-              whileTap={{ scale: 0.98 }}
-              transition={{ duration: 0.2 }}
-              className="inline-flex items-center gap-2 bg-gradient-to-r from-[#B29DD9] via-[#C5D4F5] to-[#B4C5F7] text-white font-semibold px-7 py-3 rounded-full shadow-lg hover:shadow-xl transition-all"
-            >
-              <ArrowDownTrayIcon className="h-5 w-5" />
-              Descargar APK de Emonical
-            </motion.a>
-            <p className="text-gray-600 mt-3 text-xs md:text-sm">
-              También puedes{" "}
-              <span className="text-[#B29DD9] font-semibold">
-                instalarla como PWA
-              </span>{" "}
-              desde el menú de tu navegador 📱
-            </p>
-          </div>
-        </div>
-
-        {/* Columna derecha: mockups en “fan” */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          viewport={{ once: true }}
-          className="flex justify-center md:justify-end"
-        >
-          <div className="relative w-full max-w-md h-[340px] md:h-[420px]">
-            {PREVIEWS.map((img, i) => {
-              const base =
-                "absolute rounded-3xl shadow-xl border border-white/70 bg-white/80";
-              const positions = [
-                "top-10 -left-2 rotate-[-8deg]",
-                "top-3 right-0 rotate-[4deg] z-20",
-                "bottom-2 left-6 rotate-[1deg]",
-              ];
-              const sizes =
-                "w-44 h-80 md:w-52 md:h-[19rem] object-cover";
-
+            {FEATURES.map((item) => {
+              const Icon = item.icon;
               return (
                 <motion.div
-                  key={img.src}
-                  className={`${base} ${positions[i]} overflow-hidden`}
-                  whileHover={{ scale: 1.04, y: -4 }}
-                  transition={{ duration: 0.25 }}
+                  key={item.title}
+                  whileHover={{ scale: 1.03, x: 6 }}
+                  transition={{ type: "spring", stiffness: 250 }}
+                  className="flex gap-4 items-start rounded-2xl bg-white/75 border border-white/50 px-5 py-4 shadow-lg backdrop-blur-xl"
                 >
-                  <img
-                    src={img.src}
-                    alt={img.alt}
-                    loading="lazy"
-                    className={sizes}
-                  />
+                  <div className="h-12 w-12 rounded-xl bg-[#F4EDFF] flex items-center justify-center shadow-inner">
+                    <Icon className="h-6 w-6 text-[#A88BE3]" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-[#2D2D2D]">{item.title}</h3>
+                    <p className="text-sm text-gray-600">{item.text}</p>
+                  </div>
                 </motion.div>
               );
             })}
           </div>
+
+          {/* Botón APK */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.35 }}
+          >
+            <motion.a
+              href="/emonical.apk"
+              download
+              whileHover={{ scale: 1.07, y: -4 }}
+              whileTap={{ scale: 0.93 }}
+              className="inline-flex items-center gap-3 px-8 py-3 rounded-full bg-gradient-to-r from-[#B29DD9] to-[#C5D4F5] text-white font-semibold shadow-xl hover:shadow-2xl"
+            >
+              <ArrowDownTrayIcon className="h-6 w-6" />
+              Descargar APK 🚀
+            </motion.a>
+            <p className="text-gray-600 mt-3 text-sm">
+              También disponible como <span className="font-semibold text-[#A88BE3]">PWA</span> 📲
+            </p>
+          </motion.div>
+        </div>
+
+        {/* ------------------ DERECHA (AUTO-CAMBIO) ------------------ */}
+        <motion.div
+          className="relative w-full max-w-md h-[360px] md:h-[460px]"
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          transition={{ duration: 0.7 }}
+          viewport={{ once: true }}
+        >
+          {PREVIEWS.map((img, i) => {
+            const POS = [
+              "-rotate-6 -left-6 top-10",
+              "rotate-3 right-0 top-2 z-30",
+              "rotate-1 left-3 bottom-8 z-20",
+              "-rotate-2 right-6 bottom-0 z-10",
+            ];
+
+            const isActive = i === active; // ⭐ imagen visible
+
+            return (
+              <motion.img
+                key={i}
+                custom={i}
+                variants={floatVariant}
+                initial="initial"
+                animate={{
+                  opacity: isActive ? 1 : 0,
+                  scale: isActive ? 1 : 0.9,
+                  y: isActive ? 0 : 10,
+                }}
+                src={img.src}
+                alt={img.alt}
+                draggable={false}
+                className={`absolute rounded-3xl border border-white/60 shadow-2xl w-40 h-72 md:w-56 md:h-[20rem] object-cover ${POS[i]}`}
+                transition={{
+                  duration: 0.8,
+                  ease: "easeInOut",
+                }}
+                whileHover={{ scale: 1.1, y: -8, rotate: 0 }}
+              />
+            );
+          })}
         </motion.div>
       </div>
 
-      {/* Mini franja inferior (separador suave) */}
-      <div className="relative z-10 mt-4 h-px w-full bg-gradient-to-r from-transparent via-[#B29DD9]/40 to-transparent" />
+      {/* Línea final */}
+      <div className="relative z-10 mt-14 h-px w-full bg-gradient-to-r from-transparent via-[#B29DD9]/40 to-transparent" />
     </section>
   );
 }
