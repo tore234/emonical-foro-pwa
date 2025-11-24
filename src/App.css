@@ -1,3 +1,30 @@
+/* ============================
+      🌸 ESTILO EMONICAL 🌸
+   Paleta pastel + glassmorphism
+=============================== */
+
+:root {
+  --primary: #b29dd9;
+  --primary-soft: #d8caf9;
+  --accent: #b4c5f7;
+  --text-dark: #2c254d;
+  --text: #3d3d3d;
+  --text-soft: #6d6d6d;
+  --background: #f8f6ff;
+  --card-bg: rgba(255, 255, 255, 0.7);
+  --radius: 1.4rem;
+  --shadow-soft: 0 8px 26px rgba(178, 157, 217, 0.25);
+}
+
+/* Fondo global */
+body {
+  background: var(--background);
+  color: var(--text);
+  font-family: "Inter", system-ui, sans-serif;
+  line-height: 1.6;
+}
+
+/* Contenedor principal */
 #root {
   max-width: 1280px;
   margin: 0 auto;
@@ -5,25 +32,33 @@
   text-align: center;
 }
 
+/* ============================
+       LOGOTIPOS / ICONOS
+=============================== */
+
 .logo {
   height: 6em;
   padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+  transition: 350ms ease;
+  filter: drop-shadow(0 0 0 rgba(0, 0, 0, 0));
 }
 
+.logo:hover {
+  filter: drop-shadow(0 0 1.5em var(--primary));
+  transform: scale(1.03);
+}
+
+.logo.react:hover {
+  filter: drop-shadow(0 0 1.5em var(--accent));
+}
+
+/* Rotación suave y elegante */
 @keyframes logo-spin {
   from {
-    transform: rotate(0deg);
+    transform: rotate(0deg) scale(1);
   }
   to {
-    transform: rotate(360deg);
+    transform: rotate(360deg) scale(1);
   }
 }
 
@@ -33,10 +68,36 @@
   }
 }
 
+/* ============================
+            TARJETAS
+=============================== */
+
 .card {
   padding: 2em;
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.65);
+  box-shadow: var(--shadow-soft);
+  transition: 300ms ease;
 }
 
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 28px rgba(178, 157, 217, 0.32);
+}
+
+/* Texto guía */
 .read-the-docs {
-  color: #888;
+  color: var(--text-soft);
+  font-size: 0.95rem;
+  margin-top: 1rem;
+  opacity: 0.85;
+  transition: 200ms;
+}
+
+.read-the-docs:hover {
+  opacity: 1;
+  color: var(--primary);
 }

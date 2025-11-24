@@ -8,149 +8,164 @@ import {
   ArrowDownTrayIcon,
 } from "@heroicons/react/24/solid";
 
+// Mockups de app
 import mockHome from "../../assets/mockups/emonical_home.png";
 import mockEmociones from "../../assets/mockups/emonical_emociones.png";
 import mockChat from "../../assets/mockups/emonical_chat.png";
 import mockPerfil from "../../assets/mockups/emonical_perfil.png";
 
+// Avatares emocionales
+import avatarAnsiedad from "../../assets/emociones/emonical_avatar_ansiedad.png";
+import avatarEnojo from "../../assets/emociones/emonical_avatar_enojo.png";
+import avatarEstres from "../../assets/emociones/emonical_avatar_estres.png";
+import avatarMiedo from "../../assets/emociones/emonical_avatar_miedo.png";
+import avatarNeutral from "../../assets/emociones/emonical_avatar_neutral.png";
+import avatarTristeza from "../../assets/emociones/emonical_avatar_tristeza.png";
+
+// ⭐ Textos estilo Apple
 const FEATURES = [
   {
     icon: HeartIcon,
-    title: "Crecimiento emocional ❤️",
-    text: "Sesiones guiadas, respiración consciente y actividades breves para acompañarte día a día.",
+    title: "Bienestar que te acompaña",
+    text: "Ejercicios breves, respiración consciente y herramientas para tu equilibrio emocional diario.",
   },
   {
     icon: CubeTransparentIcon,
-    title: "Realidad Aumentada (AR) ✨",
-    text: "Explora entornos inmersivos que representan calma, energía o enfoque según cómo te sientas.",
+    title: "Experiencias en AR",
+    text: "Explora espacios inmersivos que reflejan calma, energía y enfoque.",
   },
   {
     icon: DevicePhoneMobileIcon,
-    title: "Optimizada para tu móvil 📱",
-    text: "Instálala como PWA desde el navegador o descarga el APK seguro.",
+    title: "Diseñada para tu estilo de vida",
+    text: "Funciona como PWA o app móvil. Rápida, ligera y siempre contigo.",
   },
 ];
 
 const PREVIEWS = [
-  { src: mockHome, alt: "Pantalla de inicio de Emonical AR" },
-  { src: mockEmociones, alt: "Pantalla para registrar emociones" },
-  { src: mockChat, alt: "Pantalla de chat con Emonical" },
-  { src: mockPerfil, alt: "Pantalla de perfil de usuario" },
+  { src: mockHome, alt: "Pantalla de inicio" },
+  { src: mockEmociones, alt: "Pantalla emociones" },
+  { src: mockChat, alt: "Pantalla chat" },
+  { src: mockPerfil, alt: "Pantalla perfil" },
 ];
 
-// 🎞️ Animación flotante
+// ⭐ NUEVO → Avatares flotantes alrededor
+const AVATARES = [
+  avatarAnsiedad,
+  avatarEstres,
+  avatarMiedo,
+  avatarEnojo,
+  avatarNeutral,
+  avatarTristeza,
+];
+
+// 🍃 Efecto flotante Apple
 const floatVariant = {
   initial: { opacity: 0, y: 40, scale: 0.95 },
   animate: (i) => ({
     opacity: 1,
     y: [0, -12, 0],
+    rotate: [0, i % 2 ? -2 : 2, 0],
     scale: 1,
-    rotate: [0, i % 2 === 0 ? -2 : 2, 0],
     transition: {
+      y: { duration: 4.5, repeat: Infinity, ease: "easeInOut" },
+      rotate: { duration: 6, repeat: Infinity, ease: "easeInOut" },
       opacity: { delay: i * 0.15, duration: 0.6 },
-      y: {
-        delay: 0.4 + i * 0.1,
-        duration: 4,
-        repeat: Infinity,
-        ease: "easeInOut",
-      },
-      rotate: {
-        delay: 0.4 + i * 0.1,
-        duration: 5,
-        repeat: Infinity,
-        ease: "easeInOut",
-      },
     },
   }),
 };
 
 export default function DescubrirApp() {
-
-  // ⭐ Cambio automático de imágenes
   const [active, setActive] = useState(0);
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setActive((prev) => (prev + 1) % PREVIEWS.length);
-    }, 3500);
+    const interval = setInterval(
+      () => setActive((prev) => (prev + 1) % PREVIEWS.length),
+      4000
+    );
     return () => clearInterval(interval);
   }, []);
 
   return (
     <section
       id="descubrir-app"
-      className="relative max-w-7xl mx-auto px-6 py-20 overflow-hidden"
+      className="relative max-w-7xl mx-auto px-6 py-24 overflow-hidden"
     >
-      {/* 🌈 Fondo Aurora Premium */}
+      {/* 🌈 Fondo Premium Vision Pro */}
       <motion.div
-        className="absolute inset-0 bg-gradient-to-br from-[#B7C8FF]/40 via-[#E6D9FF]/35 to-[#A9E1FF]/40 blur-3xl opacity-70"
-        animate={{ opacity: [0.4, 0.9, 0.4], scale: [1, 1.1, 1] }}
-        transition={{ duration: 12, repeat: Infinity }}
+        className="absolute inset-0 bg-gradient-to-br
+                   from-[#DCCBFF]/40 via-[#C7D9FF]/30 to-[#B8F0FF]/40
+                   blur-[140px] opacity-80"
+        animate={{ opacity: [0.6, 0.9, 0.6], scale: [1, 1.04, 1] }}
+        transition={{ duration: 18, repeat: Infinity }}
       />
 
-      {/* 💫 Halo dinámico */}
+      {/* ✨ Halo lateral */}
       <motion.div
-        className="absolute top-1/3 right-0 w-80 h-80 rounded-full bg-[#C5B0FF]/40 blur-[120px]"
-        animate={{ x: [0, -18, 0], y: [0, 18, 0] }}
-        transition={{ duration: 14, repeat: Infinity }}
+        className="absolute top-1/3 right-0 w-96 h-96 rounded-full 
+                   bg-[#A78BFA]/30 blur-[160px]"
+        animate={{ x: [0, -25, 0], y: [0, 20, 0] }}
+        transition={{ duration: 16, repeat: Infinity }}
       />
 
-      {/* GRID principal */}
-      <div className="relative z-10 grid md:grid-cols-2 gap-14 items-center">
+      {/* ========================= */}
+      {/*    GRID PRINCIPAL        */}
+      {/* ========================= */}
+      <div className="relative z-10 grid md:grid-cols-2 gap-16 items-center">
 
         {/* ------------------ IZQUIERDA ------------------ */}
-        <div className="space-y-7">
+        <div className="space-y-8">
 
-          {/* Badge */}
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4 }}
-            className="inline-flex items-center gap-2 rounded-full bg-white/70 backdrop-blur-xl px-4 py-1 text-xs text-[#7A5FCF] font-semibold border border-white/50 shadow-sm"
+            className="inline-flex items-center gap-2 rounded-full
+                       bg-white/60 backdrop-blur-xl px-4 py-1
+                       text-xs text-[#6A42D9] font-semibold
+                       border border-white/50 shadow-sm"
           >
             <CubeTransparentIcon className="h-4 w-4" />
-            Bienestar + Realidad Aumentada + PWA ✨
+            AR • Bienestar • Inteligencia Emocional
           </motion.div>
 
-          {/* Título */}
           <motion.h2
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-[#1A1B2E] leading-tight tracking-tight"
+            className="text-4xl md:text-5xl lg:text-6xl font-extrabold 
+                       text-[#1A1B2E] leading-tight tracking-tight"
           >
-            Descubre
-            <span className="block mt-1 relative">
-              <span className="absolute inset-0 bg-gradient-to-r from-[#B29DD9] to-[#C5D4F5] blur-xl opacity-50 rounded-lg" />
-              <span className="relative bg-gradient-to-r from-[#B29DD9] to-[#C5D4F5] text-transparent bg-clip-text drop-shadow-lg">
-                Emonical Móvil 🌿
-              </span>
+            Emonical
+            <span className="block mt-1 bg-gradient-to-r
+                             from-[#A78BFA] to-[#80AFFF]
+                             bg-clip-text text-transparent drop-shadow">
+              Móvil
             </span>
           </motion.h2>
 
           <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 0.2 }}
-            className="text-gray-700 text-lg leading-relaxed"
+            className="text-gray-700 text-lg leading-relaxed max-w-lg"
           >
-            Tu espacio emocional en el bolsillo: emociones, AR, chat terapéutico
-            y herramientas de bienestar que crecen contigo 💜
+            Reconecta contigo. Emociones, actividades guiadas, AR y chat terapéutico  
+            en una experiencia fluida, suave y elegante.
           </motion.p>
 
-          {/* CARACTERÍSTICAS */}
-          <div className="grid gap-4">
+          {/* CARDS */}
+          <div className="grid gap-5">
             {FEATURES.map((item) => {
               const Icon = item.icon;
               return (
                 <motion.div
                   key={item.title}
-                  whileHover={{ scale: 1.03, x: 6 }}
-                  transition={{ type: "spring", stiffness: 250 }}
-                  className="flex gap-4 items-start rounded-2xl bg-white/75 border border-white/50 px-5 py-4 shadow-lg backdrop-blur-xl"
+                  whileHover={{ scale: 1.03, x: 4 }}
+                  className="flex gap-4 items-start rounded-2xl
+                             bg-white/70 backdrop-blur-2xl 
+                             border border-white/30 
+                             px-6 py-5 shadow-[0_12px_40px_rgba(0,0,0,0.06)]"
                 >
-                  <div className="h-12 w-12 rounded-xl bg-[#F4EDFF] flex items-center justify-center shadow-inner">
-                    <Icon className="h-6 w-6 text-[#A88BE3]" />
+                  <div className="h-12 w-12 rounded-2xl bg-[#EFE9FF]
+                                  flex items-center justify-center shadow-inner">
+                    <Icon className="h-6 w-6 text-[#8F6AFD]" />
                   </div>
                   <div>
                     <h3 className="font-semibold text-[#2D2D2D]">{item.title}</h3>
@@ -161,45 +176,62 @@ export default function DescubrirApp() {
             })}
           </div>
 
-          {/* Botón APK */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.35 }}
+          {/* CTA */}
+          <motion.a
+            href="/emonical.apk"
+            download
+            whileHover={{ scale: 1.06, y: -3 }}
+            whileTap={{ scale: 0.95 }}
+            className="inline-flex items-center gap-3 px-9 py-3.5 rounded-full
+                       bg-black text-white font-semibold
+                       shadow-[0_8px_20px_rgba(0,0,0,0.25)]
+                       hover:bg-[#1A1A1A] transition-all"
           >
-            <motion.a
-              href="/emonical.apk"
-              download
-              whileHover={{ scale: 1.07, y: -4 }}
-              whileTap={{ scale: 0.93 }}
-              className="inline-flex items-center gap-3 px-8 py-3 rounded-full bg-gradient-to-r from-[#B29DD9] to-[#C5D4F5] text-white font-semibold shadow-xl hover:shadow-2xl"
-            >
-              <ArrowDownTrayIcon className="h-6 w-6" />
-              Descargar APK 🚀
-            </motion.a>
-            <p className="text-gray-600 mt-3 text-sm">
-              También disponible como <span className="font-semibold text-[#A88BE3]">PWA</span> 📲
-            </p>
-          </motion.div>
+            <ArrowDownTrayIcon className="h-6 w-6" />
+            Descargar APK
+          </motion.a>
+
+          <p className="text-gray-600 text-sm pt-2">
+            También disponible como PWA 📲
+          </p>
         </div>
 
-        {/* ------------------ DERECHA (AUTO-CAMBIO) ------------------ */}
-        <motion.div
-          className="relative w-full max-w-md h-[360px] md:h-[460px]"
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          transition={{ duration: 0.7 }}
-          viewport={{ once: true }}
-        >
-          {PREVIEWS.map((img, i) => {
-            const POS = [
-              "-rotate-6 -left-6 top-10",
-              "rotate-3 right-0 top-2 z-30",
-              "rotate-1 left-3 bottom-8 z-20",
-              "-rotate-2 right-6 bottom-0 z-10",
-            ];
+        {/* ------------------ DERECHA CON MOCKUPS ------------------ */}
+        <motion.div className="relative w-full max-w-md h-[420px] md:h-[500px]">
 
-            const isActive = i === active; // ⭐ imagen visible
+          {/* 🌟 AVATARES FLOTANTES */}
+          {AVATARES.map((src, i) => {
+            const positions = [
+              "top-0 left-10",
+              "top-6 right-6",
+              "top-1/2 -left-6",
+              "bottom-10 left-3",
+              "bottom-0 right-10",
+              "top-1/3 -right-10"
+            ];
+            return (
+              <motion.img
+                key={i}
+                custom={i}
+                variants={floatVariant}
+                initial="initial"
+                animate="animate"
+                src={src}
+                alt="Emonical Avatar"
+                className={`absolute w-20 h-20 md:w-24 md:h-24 opacity-80 
+                            drop-shadow-xl ${positions[i]}`}
+              />
+            );
+          })}
+
+          {/* Mockups principales */}
+          {PREVIEWS.map((img, i) => {
+            const positions = [
+              "-rotate-6 -left-6 top-12",
+              "rotate-3 right-0 top-4 z-30",
+              "rotate-1 left-2 bottom-10 z-20",
+              "-rotate-2 right-6 bottom-3 z-10",
+            ];
 
             return (
               <motion.img
@@ -208,19 +240,17 @@ export default function DescubrirApp() {
                 variants={floatVariant}
                 initial="initial"
                 animate={{
-                  opacity: isActive ? 1 : 0,
-                  scale: isActive ? 1 : 0.9,
-                  y: isActive ? 0 : 10,
+                  opacity: active === i ? 1 : 0,
+                  scale: active === i ? 1 : 0.92,
                 }}
                 src={img.src}
                 alt={img.alt}
                 draggable={false}
-                className={`absolute rounded-3xl border border-white/60 shadow-2xl w-40 h-72 md:w-56 md:h-[20rem] object-cover ${POS[i]}`}
-                transition={{
-                  duration: 0.8,
-                  ease: "easeInOut",
-                }}
-                whileHover={{ scale: 1.1, y: -8, rotate: 0 }}
+                className={`absolute rounded-3xl border border-white/60
+                            shadow-[0_20px_60px_rgba(0,0,0,0.15)]
+                            w-44 h-80 md:w-60 md:h-[22rem] object-cover
+                            ${positions[i]}`}
+                whileHover={{ scale: 1.05, rotate: 0 }}
               />
             );
           })}
@@ -228,7 +258,8 @@ export default function DescubrirApp() {
       </div>
 
       {/* Línea final */}
-      <div className="relative z-10 mt-14 h-px w-full bg-gradient-to-r from-transparent via-[#B29DD9]/40 to-transparent" />
+      <div className="relative z-10 mt-20 h-px w-full 
+                      bg-gradient-to-r from-transparent via-[#A78BFA]/40 to-transparent" />
     </section>
   );
 }
