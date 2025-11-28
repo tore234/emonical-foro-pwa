@@ -1,7 +1,13 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { db } from "../firebase";
-import { collection, getDocs, query, orderBy } from "firebase/firestore";
+import {
+  collection,
+  getDocs,
+  query,
+  orderBy
+} from "firebase/firestore";
+
 import { ForoForm, ForoList } from "../components/Foro";
 import WakeBotButton from "../components/Bot/WakeBotButton";
 
@@ -44,7 +50,19 @@ export default function Foro() {
 
     const cargarPosts = async () => {
       try {
-        const q = query(collection(db, "comentarios"), orderBy("timestamp", "desc"));
+        let q;
+
+        // 🔎 VERIFICAMOS SI EXISTE timestamp
+        try {
+          q = query(
+            collection(db, "comentarios"),
+            orderBy("timestamp", "desc")
+          );
+        } catch {
+          console.warn("⚠ Firestore sin 'timestamp'. Orden desactivado.");
+          q = query(collection(db, "comentarios"));
+        }
+
         const querySnapshot = await getDocs(q);
 
         const data = querySnapshot.docs.map((doc) => ({
@@ -52,9 +70,11 @@ export default function Foro() {
           ...doc.data(),
         }));
 
+        console.log("🔥 Datos Firestore cargados:", data);
+
         let merged = [...data];
 
-        // Mensaje emocional diario del bot
+        // Mensaje emocional diario
         if (typeof window !== "undefined") {
           const hoy = new Date().toDateString();
           const ultimaFrase = localStorage.getItem("ultimaFrase");
@@ -76,7 +96,10 @@ export default function Foro() {
     };
 
     cargarPosts();
-    return () => (isMounted = false);
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   return (
@@ -84,7 +107,9 @@ export default function Foro() {
       
       {/* 💜 Fondo aurora suave */}
       <motion.div
-        className="absolute inset-0 bg-gradient-to-br from-[#D5B6FF]/40 via-[#B4C5F7]/35 to-[#9B6BFF]/30 blur-[120px]"
+        className="absolute inset-0 bg-gradient-to-br 
+                   from-[#D5B6FF]/40 via-[#B4C5F7]/35 to-[#9B6BFF]/30 
+                   blur-[120px]"
         animate={{ opacity: [0.5, 0.85, 0.5] }}
         transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
       />
@@ -92,7 +117,8 @@ export default function Foro() {
       {/* ⭐ Encabezado */}
       <header className="relative z-10 text-center mb-14">
         <motion.h2
-          className="text-4xl md:text-5xl font-extrabold text-[#1F1B39] flex justify-center items-center gap-3"
+          className="text-4xl md:text-5xl font-extrabold text-[#1F1B39] 
+                     flex justify-center items-center gap-3"
           initial={{ opacity: 0, y: -15 }}
           animate={{ opacity: 1, y: 0 }}
         >
@@ -108,8 +134,10 @@ export default function Foro() {
       {/* 📝 Formulario + Lista */}
       <div className="relative z-10 space-y-12">
 
-        {/* Formulario Glass UI */}
-        <div className="bg-white/70 backdrop-blur-2xl rounded-3xl p-6 border border-white/50 shadow-[0_8px_30px_rgba(155,107,255,0.15)]">
+        {/* Formulario Glass */}
+        <div className="bg-white/70 backdrop-blur-2xl 
+                        rounded-3xl p-6 border border-white/50 
+                        shadow-[0_8px_30px_rgba(155,107,255,0.15)]">
           <ForoForm setPosts={setPosts} />
         </div>
 
@@ -124,11 +152,15 @@ export default function Foro() {
             Cargando publicaciones...
           </motion.div>
         ) : errorMsg ? (
-          <div className="text-center text-sm text-red-500 bg-white/80 backdrop-blur-xl rounded-2xl px-4 py-3 max-w-md mx-auto shadow">
+          <div className="text-center text-sm text-red-500 
+                          bg-white/80 backdrop-blur-xl 
+                          rounded-2xl px-4 py-3 max-w-md mx-auto shadow">
             {errorMsg}
           </div>
         ) : posts.length === 0 ? (
-          <div className="text-center text-gray-600 bg-white/70 backdrop-blur-xl rounded-2xl px-4 py-6 max-w-md mx-auto shadow">
+          <div className="text-center text-gray-600 
+                          bg-white/70 backdrop-blur-xl 
+                          rounded-2xl px-4 py-6 max-w-md mx-auto shadow">
             No hay publicaciones aún. ¡Comparte tu primera experiencia! 💌
           </div>
         ) : (

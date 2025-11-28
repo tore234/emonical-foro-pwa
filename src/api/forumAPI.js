@@ -1,6 +1,6 @@
 // src/api/forumAPI.js
 export async function askForumBot(prompt) {
-  const res = await fetch("https://armony-backend.onrender.com/chat", {
+  const res = await fetch("https://emonical-foro-back.onrender.com/chat", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
