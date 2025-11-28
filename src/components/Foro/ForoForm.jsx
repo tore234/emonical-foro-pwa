@@ -8,7 +8,6 @@ import {
 
 import { db } from "../../firebase";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
-
 import { askForumBot } from "../../api/forumAPI";
 
 // Avatares emocionales
@@ -33,6 +32,8 @@ export default function ForoForm({ setPosts }) {
   const [botRespondio, setBotRespondio] = useState(false);
   const [emocion, setEmocion] = useState("neutral");
 
+  const [focusInput, setFocusInput] = useState(false);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (loading) return;
@@ -40,11 +41,11 @@ export default function ForoForm({ setPosts }) {
     const form = e.currentTarget;
     const formData = new FormData(form);
 
-    const texto = (formData.get("texto") || "").toString().trim();
-    if (!texto) return;
+    const texto = formData.get("texto")?.toString().trim();
+    const autor = formData.get("autor")?.toString().trim() || "Anónimo";
+    const titulo = formData.get("titulo")?.toString().trim() || "Pensamiento 💭";
 
-    const autor = (formData.get("autor") || "Anónimo").toString().trim();
-    const titulo = (formData.get("titulo") || "Pensamiento 💭").toString().trim();
+    if (!texto) return;
 
     const fechaBonita = new Date().toLocaleDateString("es-MX", {
       day: "2-digit",
@@ -52,9 +53,9 @@ export default function ForoForm({ setPosts }) {
       year: "numeric",
     });
 
-    // ======== 1. CREAR OBJETO DEL USUARIO ========
+    // ================== NUEVO POST ==================
     const nuevoPost = {
-      autor: autor || "Anónimo",
+      autor,
       titulo,
       texto,
       emocion,
@@ -63,19 +64,18 @@ export default function ForoForm({ setPosts }) {
       timestamp: serverTimestamp(),
     };
 
-    // ======== 2. GUARDAR EN FIRESTORE ========
+    // Guardar en Firestore
     const ref = await addDoc(collection(db, "comentarios"), nuevoPost);
+    nuevoPost.id = ref.id;
 
-    nuevoPost.id = ref.id; // para mostrarlo inmediatamente
-
-    // ======== 3. MOSTRAR EN FRONT ========
+    // Actualizar lista
     setPosts((prev) => [nuevoPost, ...prev]);
     form.reset();
 
     setLoading(true);
     setBotRespondio(false);
 
-    // ======== 4. ENVIAR AL BOT ========
+    // ================== BOT ==================
     try {
       const textoParaBot = `Emoción: ${emocion}. Usuario escribió: ${texto}`;
       const respuesta = await askForumBot(textoParaBot);
@@ -83,34 +83,32 @@ export default function ForoForm({ setPosts }) {
       const respuestaBot = {
         autor: "Emonical Bot 🤍",
         titulo: "Respuesta a tu reflexión ✨",
-        texto: respuesta || "No pude procesar tu mensaje ahora.",
-        tipo: "bot",
+        texto: respuesta || "Hubo un problema para procesar tu reflexión 💜",
         fecha: fechaBonita,
-        emotion: "neutral",
+        tipo: "bot",
         timestamp: serverTimestamp(),
       };
 
-      // ======== 5. GUARDAR RESPUESTA DEL BOT EN FIRESTORE ========
-      const botRef = await addDoc(collection(db, "comentarios"), respuestaBot);
-      respuestaBot.id = botRef.id;
+      const refBot = await addDoc(collection(db, "comentarios"), respuestaBot);
+      respuestaBot.id = refBot.id;
 
-      // ======== 6. Insertar al lado del comentario del usuario ========
+      // Insertar debajo del comentario original
       setPosts((prev) => {
-        const updated = [...prev];
-        const iUser = updated.findIndex((p) => p.id === nuevoPost.id);
+        const arr = [...prev];
+        const index = arr.findIndex((p) => p.id === nuevoPost.id);
 
-        if (iUser >= 0) updated.splice(iUser + 1, 0, respuestaBot);
-        else updated.unshift(respuestaBot);
+        if (index >= 0) arr.splice(index + 1, 0, respuestaBot);
+        else arr.unshift(respuestaBot);
 
-        return updated;
+        return arr;
       });
 
       setBotRespondio(true);
     } catch (err) {
-      console.error("Error del bot:", err);
-    } finally {
-      setLoading(false);
+      console.error("Error al enviar mensaje al bot:", err);
     }
+
+    setLoading(false);
   };
 
   return (
@@ -118,73 +116,81 @@ export default function ForoForm({ setPosts }) {
       onSubmit={handleSubmit}
       initial={{ opacity: 0, y: 15 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6 }}
-      className="relative z-10 bg-white/80 backdrop-blur-md border border-[#d9c8f3]/60 p-8 rounded-3xl shadow-[0_8px_25px_rgba(178,157,217,0.15)] mb-14 grid gap-5"
+      transition={{ duration: 0.55 }}
+      className={`relative z-10 bg-white/80 backdrop-blur-2xl rounded-3xl p-8 border border-white/40 shadow-[0_10px_35px_rgba(180,140,255,0.18)] grid gap-6 transition-all
+        ${focusInput ? "shadow-[0_15px_45px_rgba(180,140,255,0.25)] scale-[1.01]" : ""}`}
     >
-
-      {/* TÍTULO DEL FORMULARIO */}
-      <div className="flex items-center justify-center mb-2">
-        <PencilSquareIcon className="h-6 w-6 text-[#B29DD9] mr-2" />
-        <h3 className="text-xl font-bold text-[#2D2D2D]">
-          Comparte tu experiencia 💬
-        </h3>
+      {/* ====== ENCABEZADO ====== */}
+      <div className="flex justify-center items-center gap-2 mb-2">
+        <PencilSquareIcon className="h-6 w-6 text-[#9B6BFF]" />
+        <h3 className="text-xl font-bold text-[#2D2D2D]">Comparte tu experiencia 💬</h3>
       </div>
 
-      {/* CAMPOS */}
+      {/* ====== INPUTS ====== */}
       <div className="grid gap-3">
         <input
-          type="text"
           name="autor"
+          type="text"
           placeholder="Tu nombre (opcional)"
+          onFocus={() => setFocusInput(true)}
+          onBlur={() => setFocusInput(false)}
           className="rounded-2xl border bg-white/70 px-4 py-3 text-sm"
         />
 
         <input
-          type="text"
           name="titulo"
+          type="text"
           placeholder="Título"
+          onFocus={() => setFocusInput(true)}
+          onBlur={() => setFocusInput(false)}
           className="rounded-2xl border bg-white/70 px-4 py-3 text-sm"
         />
 
-        {/* SELECTOR DE EMOCIÓN */}
-        <p className="text-xs font-semibold text-gray-600">¿Cómo te sientes?</p>
+        {/* ===== SELECTOR EMOCIONES ===== */}
+        <p className="text-xs font-semibold text-gray-600 mt-2">¿Cómo te sientes ahora?</p>
+
         <div className="flex flex-wrap gap-2">
           {EMOCIONES.map((emo) => (
-            <button
+            <motion.button
               key={emo.id}
               type="button"
+              whileTap={{ scale: 0.93 }}
               onClick={() => setEmocion(emo.id)}
-              className={`flex items-center gap-2 px-3 py-2 rounded-2xl text-xs border transition ${
-                emocion === emo.id
-                  ? "border-[#B29DD9] bg-[#F3EEFF]"
-                  : "border-transparent bg-white/70"
-              }`}
+              className={`flex items-center gap-2 px-3 py-2 rounded-2xl text-xs border transition shadow-sm
+                ${
+                  emocion === emo.id
+                    ? "border-[#9B6BFF] bg-[#F3EEFF]"
+                    : "border-transparent bg-white/70 hover:bg-gray-100"
+                }`}
             >
               <img src={emo.image} className="w-7 h-7 rounded-full" />
               {emo.label}
-            </button>
+            </motion.button>
           ))}
         </div>
 
+        {/* ===== TEXTO PRINCIPAL ===== */}
         <textarea
           name="texto"
-          placeholder="Escribe tu mensaje..."
-          className="rounded-2xl border bg-white/70 px-4 py-3 text-sm h-36 resize-none"
           required
+          placeholder="Escribe tu mensaje..."
+          onFocus={() => setFocusInput(true)}
+          onBlur={() => setFocusInput(false)}
+          className="rounded-2xl border bg-white/70 px-4 py-3 text-sm h-36 resize-none"
         />
       </div>
 
-      {/* BOTÓN DE ENVIAR */}
+      {/* ===== BOTÓN SUBMIT ===== */}
       <motion.button
         type="submit"
-        whileTap={{ scale: 0.97 }}
+        whileTap={{ scale: 0.96 }}
         disabled={loading}
-        className="flex items-center justify-center gap-2 font-semibold py-3 rounded-2xl bg-gradient-to-r from-[#B29DD9] to-[#B4C5F7] text-white"
+        className="flex items-center justify-center gap-2 py-3 rounded-2xl font-semibold text-white bg-gradient-to-r from-[#A78BFA] to-[#8BB8FF] shadow-lg"
       >
         {loading ? (
           <>
-            <SparklesIcon className="h-5 w-5 animate-spin text-white" />
-            EmonicalBot está escribiendo...
+            <SparklesIcon className="h-5 w-5 animate-spin" />
+            EmonicalBot está pensando...
           </>
         ) : (
           <>
@@ -195,9 +201,7 @@ export default function ForoForm({ setPosts }) {
       </motion.button>
 
       {botRespondio && (
-        <p className="text-center text-sm text-[#B29DD9]">
-          ✨ EmonicalBot ha respondido
-        </p>
+        <p className="text-center text-sm text-[#9B6BFF]">✨ EmonicalBot respondió a tu reflexión</p>
       )}
     </motion.form>
   );
