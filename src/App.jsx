@@ -32,9 +32,18 @@ function App() {
   const { theme, toggleTheme } = useTheme();
   const [menuOpen, setMenuOpen] = useState(false);
 
+  const currentYear = new Date().getFullYear();
+  const isDark = theme === "dark";
+
   const handleLogout = async () => {
     await logout();
     setMenuOpen(false);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const handleNavClick = () => {
+    setMenuOpen(false);
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   if (loadingAuth) {
@@ -56,38 +65,42 @@ function App() {
         color: "var(--text-main)",
       }}
     >
-
-      {/* NAVBAR */}
+      {/* NAVBAR PRINCIPAL FIJO */}
       <motion.nav
         initial={{ y: -18, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         className="
+          fixed top-0 left-0 right-0 z-50
           flex items-center justify-between 
-          px-6 py-4 sticky top-0 z-50 
+          px-4 sm:px-6 py-3 md:py-4
           backdrop-blur-2xl border-b
           transition-all
         "
         style={{
-          background: "var(--card-bg)",
+          background: isDark
+            ? "linear-gradient(135deg, rgba(15,23,42,0.96), rgba(15,23,42,0.9))"
+            : "linear-gradient(135deg, rgba(255,255,255,0.96), rgba(248,250,252,0.9))",
           borderColor: "var(--card-border)",
-          boxShadow: `0 0 22px var(--glow-purple)`,
+          boxShadow: isDark
+            ? "0 0 22px var(--glow-purple)"
+            : "0 0 18px rgba(148,163,184,0.45)",
         }}
       >
-
         {/* LOGO AUTO-SWITCH FUNCIONAL */}
-        <Link to="/" className="flex items-center space-x-2 group">
+        <Link
+          to="/"
+          onClick={handleNavClick}
+          className="flex items-center space-x-2 group"
+        >
           <img
             src={theme === "dark" ? logoDark : logoLight}
             alt="Emonical"
             className="
-              h-9 md:h-10
+              h-8 md:h-10
               transition-all duration-300 
               group-hover:scale-110
-
               brightness-110 saturate-150
               drop-shadow-[0_0_6px_rgba(0,123,255,0.35)]
-              drop-shadow-[0_2px_4px_rgba(0,0,0,0.2)]
-
               dark:brightness-125 dark:saturate-150
               dark:drop-shadow-[0_0_8px_rgba(255,255,255,0.3)]
             "
@@ -97,13 +110,17 @@ function App() {
         {/* BOTÓN MOBILE */}
         <button
           className="md:hidden p-2 rounded-lg hover:bg-white/10 transition"
-          onClick={() => setMenuOpen(!menuOpen)}
+          onClick={() => setMenuOpen((v) => !v)}
         >
-          {menuOpen ? <XMarkIcon className="h-7 w-7" /> : <Bars3Icon className="h-7 w-7" />}
+          {menuOpen ? (
+            <XMarkIcon className="h-7 w-7" />
+          ) : (
+            <Bars3Icon className="h-7 w-7" />
+          )}
         </button>
 
         {/* MENU DESKTOP */}
-        <div className="hidden md:flex items-center space-x-8 text-sm font-medium">
+        <div className="hidden md:flex items-center space-x-6 lg:space-x-8 text-sm font-medium">
           {[
             { to: "/", icon: HomeIcon, label: "Inicio" },
             { to: "/descubrir", icon: SparklesIcon, label: "Descubrir" },
@@ -114,7 +131,13 @@ function App() {
             <Link
               key={to}
               to={to}
-              className="flex items-center gap-1 hover:text-[var(--glow-blue)] transition"
+              onClick={handleNavClick}
+              className="
+                flex items-center gap-1.5 px-2 py-1 rounded-xl
+                hover:text-[var(--glow-blue)]
+                hover:bg-white/5
+                transition
+              "
             >
               <Icon className="h-5 w-5" />
               {label}
@@ -124,13 +147,16 @@ function App() {
           {/* TEMA */}
           <button
             onClick={toggleTheme}
-            className="p-2 rounded-xl border transition hover:scale-105"
+            className="
+              p-2 rounded-xl border transition hover:scale-105
+              flex items-center justify-center
+            "
             style={{
               background: "var(--card-bg)",
               borderColor: "var(--card-border)",
             }}
           >
-            {theme === "dark" ? (
+            {isDark ? (
               <SunIcon className="h-5 w-5 text-yellow-300" />
             ) : (
               <MoonIcon className="h-5 w-5 text-indigo-500" />
@@ -141,7 +167,7 @@ function App() {
           {user && (
             <button
               onClick={handleLogout}
-              className="text-pink-300 hover:text-pink-400 flex items-center gap-1"
+              className="text-pink-300 hover:text-pink-400 flex items-center gap-1 text-sm"
             >
               <ArrowRightOnRectangleIcon className="h-4 w-4" /> Salir
             </button>
@@ -149,7 +175,7 @@ function App() {
         </div>
       </motion.nav>
 
-      {/* MENU MOBILE */}
+      {/* MENU MOBILE (FIJO BAJO EL NAV) */}
       <AnimatePresence>
         {menuOpen && (
           <motion.div
@@ -157,12 +183,15 @@ function App() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -14 }}
             className="
-              md:hidden flex flex-col gap-5 py-5 
+              md:hidden fixed top-[56px] sm:top-[64px] left-0 right-0 z-40
+              flex flex-col gap-4 py-4 
               text-center backdrop-blur-xl border-b
               shadow-lg
             "
             style={{
-              background: "var(--card-bg)",
+              background: isDark
+                ? "rgba(15,23,42,0.96)"
+                : "rgba(255,255,255,0.96)",
               borderColor: "var(--card-border)",
             }}
           >
@@ -176,8 +205,12 @@ function App() {
               <Link
                 key={to}
                 to={to}
-                className="flex items-center justify-center gap-2 text-[var(--text-main)] font-medium hover:text-[var(--glow-blue)] transition"
-                onClick={() => setMenuOpen(false)}
+                className="
+                  flex items-center justify-center gap-2 
+                  text-[var(--text-main)] font-medium 
+                  hover:text-[var(--glow-blue)] transition
+                "
+                onClick={handleNavClick}
               >
                 <Icon className="h-5 w-5" />
                 {label}
@@ -185,20 +218,32 @@ function App() {
             ))}
 
             <button
-              onClick={toggleTheme}
-              className="mx-auto mt-2 px-6 py-2 rounded-xl border text-sm hover:scale-105 transition"
+              onClick={() => {
+                toggleTheme();
+              }}
+              className="mx-auto mt-1 px-6 py-2 rounded-xl border text-sm hover:scale-105 transition flex items-center gap-2"
               style={{
                 background: "var(--card-bg)",
                 borderColor: "var(--card-border)",
               }}
             >
-              {theme === "dark" ? "☀️ Modo Claro" : "🌙 Modo Oscuro"}
+              {isDark ? (
+                <>
+                  <SunIcon className="h-4 w-4 text-yellow-300" />
+                  Modo claro
+                </>
+              ) : (
+                <>
+                  <MoonIcon className="h-4 w-4 text-indigo-500" />
+                  Modo oscuro
+                </>
+              )}
             </button>
 
             {user && (
               <button
                 onClick={handleLogout}
-                className="text-pink-300 mt-3 flex items-center justify-center gap-1"
+                className="text-pink-300 mt-2 flex items-center justify-center gap-1 text-sm"
               >
                 <ArrowRightOnRectangleIcon className="h-4 w-4" /> Salir
               </button>
@@ -207,9 +252,9 @@ function App() {
         )}
       </AnimatePresence>
 
-      {/* CONTENIDO */}
+      {/* CONTENIDO (padding-top para no quedar debajo del navbar fijo) */}
       <motion.main
-        className="flex-grow px-4 md:px-8 pt-6"
+        className="flex-grow px-4 md:px-8 pt-24 md:pt-28 pb-10"
         initial={{ opacity: 0, y: 6 }}
         animate={{ opacity: 1, y: 0 }}
       >
@@ -221,6 +266,31 @@ function App() {
           <Route path="/perfil" element={<Perfil />} />
         </Routes>
       </motion.main>
+
+      {/* FOOTER – DERECHOS RESERVADOS */}
+      <footer
+        className="
+          w-full px-4 md:px-8 py-4 border-t
+          text-xs md:text-sm flex flex-col md:flex-row
+          items-center justify-between gap-2
+        "
+        style={{
+          background: isDark
+            ? "rgba(15,23,42,0.96)"
+            : "rgba(255,255,255,0.96)",
+          borderColor: "var(--card-border)",
+          color: "var(--text-soft)",
+        }}
+      >
+        <span>© {currentYear} Emonical · Todos los derechos reservados.</span>
+        <span className="flex items-center gap-1">
+          Desarrollado por
+          <span className="font-semibold text-[var(--glow-blue)]">
+            DKT Devs
+          </span>
+          💜
+        </span>
+      </footer>
     </div>
   );
 }
