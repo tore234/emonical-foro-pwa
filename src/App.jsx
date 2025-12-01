@@ -5,6 +5,7 @@ import Foro from "./pages/Foro";
 import Noticias from "./pages/Noticias";
 import Perfil from "./pages/Perfil";
 import Descubrir from "./pages/Descubrir";
+
 import { motion, AnimatePresence } from "framer-motion";
 
 import {
@@ -18,27 +19,29 @@ import {
   SparklesIcon,
 } from "@heroicons/react/24/outline";
 
-import { useAuth } from "./context/AuthContext"; // 👈 usamos el contexto
+import { MoonIcon, SunIcon } from "@heroicons/react/24/solid";
+import { useTheme } from "./context/ThemeContext";
+import { useAuth } from "./context/AuthContext";
+
+// ✅ IMPORTACIÓN CORRECTA DE LOGOS
+import logoDark from "./assets/emonical-logo-light.png";
+import logoLight from "./assets/emonical-logo-dark.png";
 
 function App() {
-  const { user, loadingAuth, logout } = useAuth(); // 👈 un solo origen de verdad
+  const { user, loadingAuth, logout } = useAuth();
+  const { theme, toggleTheme } = useTheme();
   const [menuOpen, setMenuOpen] = useState(false);
 
   const handleLogout = async () => {
-    try {
-      await logout();
-      setMenuOpen(false);
-    } catch (error) {
-      console.error("Error al cerrar sesión:", error);
-    }
+    await logout();
+    setMenuOpen(false);
   };
 
-  // Mientras Firebase decide si hay usuario o no
   if (loadingAuth) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-[#B4C5F7] via-[#C5D4F5] to-[#CEEBF8]">
-        <div className="bg-white/80 px-5 py-4 rounded-2xl shadow-lg border border-white/60 text-sm text-gray-700 flex items-center gap-2">
-          <SparklesIcon className="h-5 w-5 text-[#B29DD9] animate-spin" />
+      <div className="min-h-screen flex items-center justify-center bg-[var(--bg-main)]">
+        <div className="px-5 py-3 rounded-xl bg-white/10 backdrop-blur-xl border border-white/20 text-sm text-[var(--text-main)] flex items-center gap-2">
+          <SparklesIcon className="h-5 w-5 animate-spin text-[var(--glow-purple)]" />
           Verificando sesión...
         </div>
       </div>
@@ -46,36 +49,60 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-b from-[#B4C5F7] via-[#C5D4F5] to-[#CEEBF8] text-[#2D2D2D] font-[Poppins] transition-all duration-300">
-      {/* === NAVBAR === */}
+    <div
+      className="min-h-screen flex flex-col font-[Poppins] transition-all"
+      style={{
+        background: `linear-gradient(135deg, var(--bg-main), var(--bg-deep))`,
+        color: "var(--text-main)",
+      }}
+    >
+
+      {/* NAVBAR */}
       <motion.nav
-        initial={{ y: -30, opacity: 0 }}
+        initial={{ y: -18, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.5 }}
-        className="flex items-center justify-between px-6 py-3 bg-white/60 backdrop-blur-xl shadow-[0_2px_12px_rgba(178,157,217,0.25)] sticky top-0 z-50 border-b border-white/40 rounded-b-2xl"
+        className="
+          flex items-center justify-between 
+          px-6 py-4 sticky top-0 z-50 
+          backdrop-blur-2xl border-b
+          transition-all
+        "
+        style={{
+          background: "var(--card-bg)",
+          borderColor: "var(--card-border)",
+          boxShadow: `0 0 22px var(--glow-purple)`,
+        }}
       >
-        {/* --- Logo --- */}
+
+        {/* LOGO AUTO-SWITCH FUNCIONAL */}
         <Link to="/" className="flex items-center space-x-2 group">
           <img
-            src="/assets/emonical-logo.png"
-            alt="Emonical Logo"
-            className="h-8 w-auto drop-shadow-md transition-transform duration-300 group-hover:scale-105"
+            src={theme === "dark" ? logoDark : logoLight}
+            alt="Emonical"
+            className="
+              h-9 md:h-10
+              transition-all duration-300 
+              group-hover:scale-110
+
+              brightness-110 saturate-150
+              drop-shadow-[0_0_6px_rgba(0,123,255,0.35)]
+              drop-shadow-[0_2px_4px_rgba(0,0,0,0.2)]
+
+              dark:brightness-125 dark:saturate-150
+              dark:drop-shadow-[0_0_8px_rgba(255,255,255,0.3)]
+            "
           />
         </Link>
 
-        {/* --- Botón Hamburguesa --- */}
+        {/* BOTÓN MOBILE */}
         <button
-          className="md:hidden p-2 rounded-md text-[#2D2D2D] hover:bg-white/40 transition"
+          className="md:hidden p-2 rounded-lg hover:bg-white/10 transition"
           onClick={() => setMenuOpen(!menuOpen)}
         >
-          {menuOpen ? (
-            <XMarkIcon className="h-6 w-6" />
-          ) : (
-            <Bars3Icon className="h-6 w-6" />
-          )}
+          {menuOpen ? <XMarkIcon className="h-7 w-7" /> : <Bars3Icon className="h-7 w-7" />}
         </button>
 
-        {/* --- Menú Desktop --- */}
+        {/* MENU DESKTOP */}
         <div className="hidden md:flex items-center space-x-8 text-sm font-medium">
           {[
             { to: "/", icon: HomeIcon, label: "Inicio" },
@@ -87,81 +114,104 @@ function App() {
             <Link
               key={to}
               to={to}
-              className="flex items-center space-x-1 hover:text-[#B29DD9] transition-all hover:scale-105"
+              className="flex items-center gap-1 hover:text-[var(--glow-blue)] transition"
             >
               <Icon className="h-5 w-5" />
-              <span>{label}</span>
+              {label}
             </Link>
           ))}
 
-          {/* Chip de usuario + logout en desktop */}
+          {/* TEMA */}
+          <button
+            onClick={toggleTheme}
+            className="p-2 rounded-xl border transition hover:scale-105"
+            style={{
+              background: "var(--card-bg)",
+              borderColor: "var(--card-border)",
+            }}
+          >
+            {theme === "dark" ? (
+              <SunIcon className="h-5 w-5 text-yellow-300" />
+            ) : (
+              <MoonIcon className="h-5 w-5 text-indigo-500" />
+            )}
+          </button>
+
+          {/* LOGOUT */}
           {user && (
-            <div className="flex items-center gap-3 border-l border-gray-200 pl-4">
-              <span className="text-xs text-gray-600 max-w-[170px] truncate">
-                {user.displayName || user.email}
-              </span>
-              <button
-                onClick={handleLogout}
-                className="flex items-center gap-1 text-xs text-red-600 hover:text-red-800 transition"
-              >
-                <ArrowRightOnRectangleIcon className="h-4 w-4" />
-                Salir
-              </button>
-            </div>
+            <button
+              onClick={handleLogout}
+              className="text-pink-300 hover:text-pink-400 flex items-center gap-1"
+            >
+              <ArrowRightOnRectangleIcon className="h-4 w-4" /> Salir
+            </button>
           )}
         </div>
       </motion.nav>
 
-      {/* === MENÚ MÓVIL === */}
+      {/* MENU MOBILE */}
       <AnimatePresence>
         {menuOpen && (
           <motion.div
-            initial={{ opacity: 0, y: -10 }}
+            initial={{ opacity: 0, y: -14 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.25 }}
-            className="md:hidden bg-white/80 backdrop-blur-xl shadow-lg border-b border-white/50 rounded-b-3xl text-center py-4 flex flex-col space-y-3 z-40"
+            exit={{ opacity: 0, y: -14 }}
+            className="
+              md:hidden flex flex-col gap-5 py-5 
+              text-center backdrop-blur-xl border-b
+              shadow-lg
+            "
+            style={{
+              background: "var(--card-bg)",
+              borderColor: "var(--card-border)",
+            }}
           >
             {[
-              { to: "/", label: "Inicio" },
-              { to: "/descubrir", label: "Descubrir" },
-              { to: "/foro", label: "Foro" },
-              { to: "/noticias", label: "Noticias" },
-              { to: "/perfil", label: user ? "Perfil" : "Ingresar" },
-            ].map(({ to, label }) => (
+              { to: "/", label: "Inicio", icon: HomeIcon },
+              { to: "/descubrir", label: "Descubrir", icon: SparklesIcon },
+              { to: "/foro", label: "Foro", icon: ChatBubbleBottomCenterTextIcon },
+              { to: "/noticias", label: "Noticias", icon: NewspaperIcon },
+              { to: "/perfil", label: user ? "Perfil" : "Ingresar", icon: UserCircleIcon },
+            ].map(({ to, label, icon: Icon }) => (
               <Link
                 key={to}
                 to={to}
+                className="flex items-center justify-center gap-2 text-[var(--text-main)] font-medium hover:text-[var(--glow-blue)] transition"
                 onClick={() => setMenuOpen(false)}
-                className="text-[#2D2D2D] hover:text-[#B29DD9] font-medium tracking-wide transition"
               >
+                <Icon className="h-5 w-5" />
                 {label}
               </Link>
             ))}
 
-            {user ? (
+            <button
+              onClick={toggleTheme}
+              className="mx-auto mt-2 px-6 py-2 rounded-xl border text-sm hover:scale-105 transition"
+              style={{
+                background: "var(--card-bg)",
+                borderColor: "var(--card-border)",
+              }}
+            >
+              {theme === "dark" ? "☀️ Modo Claro" : "🌙 Modo Oscuro"}
+            </button>
+
+            {user && (
               <button
                 onClick={handleLogout}
-                className="flex justify-center items-center gap-1 text-red-600 hover:text-red-800 transition mt-2"
+                className="text-pink-300 mt-3 flex items-center justify-center gap-1"
               >
-                <ArrowRightOnRectangleIcon className="h-5 w-5" />
-                Cerrar sesión
+                <ArrowRightOnRectangleIcon className="h-4 w-4" /> Salir
               </button>
-            ) : (
-              <span className="text-gray-500 italic">
-                No has iniciado sesión
-              </span>
             )}
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* === CONTENIDO === */}
+      {/* CONTENIDO */}
       <motion.main
-        className="flex-grow p-6 md:p-10 relative z-10"
-        initial={{ opacity: 0, y: 10 }}
+        className="flex-grow px-4 md:px-8 pt-6"
+        initial={{ opacity: 0, y: 6 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
       >
         <Routes>
           <Route path="/" element={<Home />} />
@@ -171,36 +221,6 @@ function App() {
           <Route path="/perfil" element={<Perfil />} />
         </Routes>
       </motion.main>
-
-      {/* === FOOTER === */}
-      <footer className="bg-white/60 backdrop-blur-lg border-t border-white/40 py-3 text-sm flex flex-col sm:flex-row items-center justify-center gap-3 shadow-[inset_0_2px_10px_rgba(178,157,217,0.1)]">
-        {user ? (
-          <>
-            <img
-              src={user.photoURL || "/assets/emonical-avatar.png"}
-              alt="Avatar usuario"
-              className="w-8 h-8 rounded-full border border-[#B29DD9] shadow-sm"
-            />
-            <span className="text-[#2D2D2D]">
-              Sesión activa:{" "}
-              <strong className="text-[#B29DD9]">
-                {user.displayName || user.email}
-              </strong>
-            </span>
-            <button
-              onClick={handleLogout}
-              className="flex items-center gap-1 text-red-600 hover:text-red-800 transition"
-            >
-              <ArrowRightOnRectangleIcon className="h-4 w-4" />
-              Cerrar
-            </button>
-          </>
-        ) : (
-          <span className="text-gray-500 italic">
-            No has iniciado sesión
-          </span>
-        )}
-      </footer>
     </div>
   );
 }

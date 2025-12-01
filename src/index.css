@@ -1,3 +1,43 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+/* ============================
+   🌞 MODO CLARO GLOW
+============================ */
+:root {
+  --bg-main: #f8f6ff;
+  --bg-deep: #ffffff;
+  --text-main: #2a2055;
+  --text-soft: #5a4e8d;
+
+  --card-bg: rgba(255, 255, 255, 0.75);
+  --card-border: rgba(180, 160, 255, 0.35);
+
+  --glow-purple: rgba(155, 107, 255, 0.45);
+  --glow-blue: rgba(120, 180, 255, 0.40);
+  --glow-cyan: rgba(90, 240, 255, 0.28);
+}
+
+/* ============================
+   🌙 MODO OSCURO GLOW
+============================ */
+.dark {
+  --bg-main: #0f0b26;
+  --bg-deep: #1b1135;
+  --text-main: #eae6ff;
+  --text-soft: #c7c1f5;
+
+  --card-bg: rgba(255, 255, 255, 0.07);
+  --card-border: rgba(255, 255, 255, 0.15);
+
+  --glow-purple: rgba(155, 107, 255, 0.55);
+  --glow-blue: rgba(100, 170, 255, 0.45);
+  --glow-cyan: rgba(95, 255, 255, 0.35);
+}
+
+/* Aplicación base */
+body {
+  background: var(--bg-main);
+  color: var(--text-main);
+  transition: background 0.35s, color 0.35s ease;
+}

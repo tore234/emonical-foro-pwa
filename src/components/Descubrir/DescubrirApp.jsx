@@ -1,6 +1,6 @@
 // src/components/Descubrir/DescubrirApp.jsx
-import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
+import { useState, useEffect, useRef } from "react";
+import { motion, useMotionValue, useTransform } from "framer-motion";
 import {
   DevicePhoneMobileIcon,
   CubeTransparentIcon,
@@ -8,7 +8,9 @@ import {
   ArrowDownTrayIcon,
 } from "@heroicons/react/24/solid";
 
-// Mockups de app
+import { useTheme } from "../../context/ThemeContext";
+
+// Mockups
 import mockHome from "../../assets/mockups/emonical_home.png";
 import mockEmociones from "../../assets/mockups/emonical_emociones.png";
 import mockChat from "../../assets/mockups/emonical_chat.png";
@@ -22,244 +24,347 @@ import avatarMiedo from "../../assets/emociones/emonical_avatar_miedo.png";
 import avatarNeutral from "../../assets/emociones/emonical_avatar_neutral.png";
 import avatarTristeza from "../../assets/emociones/emonical_avatar_tristeza.png";
 
-// ⭐ Textos estilo Apple
-const FEATURES = [
-  {
-    icon: HeartIcon,
-    title: "Bienestar que te acompaña",
-    text: "Ejercicios breves, respiración consciente y herramientas para tu equilibrio emocional diario.",
-  },
-  {
-    icon: CubeTransparentIcon,
-    title: "Experiencias en AR",
-    text: "Explora espacios inmersivos que reflejan calma, energía y enfoque.",
-  },
-  {
-    icon: DevicePhoneMobileIcon,
-    title: "Diseñada para tu estilo de vida",
-    text: "Funciona como PWA o app móvil. Rápida, ligera y siempre contigo.",
-  },
+/* -------------------------------------------------------------------------- */
+/*                               CONFIGURACIÓN                                */
+/* -------------------------------------------------------------------------- */
+
+const EMOTIONS = [
+  { mood: "neutral", color: "#8B5CF6", avatar: avatarNeutral },
+  { mood: "ansiedad", color: "#14B8A6", avatar: avatarAnsiedad },
+  { mood: "miedo", color: "#06b6d4", avatar: avatarMiedo },
+  { mood: "estrés", color: "#f43f5e", avatar: avatarEstres },
+  { mood: "enojo", color: "#db2777", avatar: avatarEnojo },
+  { mood: "tristeza", color: "#64748b", avatar: avatarTristeza },
 ];
 
 const PREVIEWS = [
-  { src: mockHome, alt: "Pantalla de inicio" },
-  { src: mockEmociones, alt: "Pantalla emociones" },
-  { src: mockChat, alt: "Pantalla chat" },
-  { src: mockPerfil, alt: "Pantalla perfil" },
+  { src: mockHome },
+  { src: mockEmociones },
+  { src: mockChat },
+  { src: mockPerfil },
 ];
 
-// ⭐ NUEVO → Avatares flotantes alrededor
-const AVATARES = [
-  avatarAnsiedad,
-  avatarEstres,
-  avatarMiedo,
-  avatarEnojo,
-  avatarNeutral,
-  avatarTristeza,
+const FEATURES = [
+  {
+    icon: HeartIcon,
+    title: "Bienestar que vibra contigo",
+    text: "Ambientes cósmicos y ejercicios neon guiados.",
+  },
+  {
+    icon: CubeTransparentIcon,
+    title: "Realidad Aumentada",
+    text: "Energías AR según tu emoción.",
+  },
+  {
+    icon: DevicePhoneMobileIcon,
+    title: "Experiencia fluida",
+    text: "Funciona como PWA o APK, rápida y ligera.",
+  },
 ];
 
-// 🍃 Efecto flotante Apple
+/* ANIMACIÓN FLOAT */
 const floatVariant = {
-  initial: { opacity: 0, y: 40, scale: 0.95 },
+  initial: { opacity: 0, y: 50, scale: 0.9 },
   animate: (i) => ({
     opacity: 1,
-    y: [0, -12, 0],
-    rotate: [0, i % 2 ? -2 : 2, 0],
-    scale: 1,
+    y: [0, -20, 0],
+    rotate: [0, i % 2 ? -3 : 3, 0],
     transition: {
-      y: { duration: 4.5, repeat: Infinity, ease: "easeInOut" },
-      rotate: { duration: 6, repeat: Infinity, ease: "easeInOut" },
-      opacity: { delay: i * 0.15, duration: 0.6 },
+      y: { duration: 5, repeat: Infinity, ease: "easeInOut" },
+      rotate: { duration: 7, repeat: Infinity },
+      opacity: { delay: i * 0.12, duration: 0.8 },
     },
   }),
 };
 
+// Partículas cósmicas
+const generateParticles = (count) =>
+  Array.from({ length: count }, () => ({
+    x: Math.random() * 100,
+    y: Math.random() * 100,
+    size: Math.random() * 3 + 1,
+    delay: Math.random() * 5,
+  }));
+
+/* -------------------------------------------------------------------------- */
+
 export default function DescubrirApp() {
   const [active, setActive] = useState(0);
+  const [emotionIndex, setEmotionIndex] = useState(0);
+  const particles = useRef(generateParticles(40));
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
 
+  /* Cambio automático de mockups */
   useEffect(() => {
-    const interval = setInterval(
-      () => setActive((prev) => (prev + 1) % PREVIEWS.length),
-      4000
-    );
+    const interval = setInterval(() => {
+      setActive((p) => (p + 1) % PREVIEWS.length);
+      setEmotionIndex((e) => (e + 1) % EMOTIONS.length);
+    }, 3300);
     return () => clearInterval(interval);
   }, []);
+
+  /* Avatar 3D reactivo al mouse */
+  const x = useMotionValue(0);
+  const rotate = useTransform(x, [-200, 200], [-10, 10]);
+
+  const current = EMOTIONS[emotionIndex];
+
+  const cardBg = isDark ? "rgba(15,23,42,0.9)" : "rgba(255,255,255,0.96)";
+  const cardBorder = isDark
+    ? "rgba(248,250,252,0.18)"
+    : "rgba(148,163,184,0.55)";
 
   return (
     <section
       id="descubrir-app"
-      className="relative max-w-7xl mx-auto px-6 py-24 overflow-hidden"
+      className="relative max-w-7xl mx-auto px-6 py-24 lg:py-32 overflow-hidden"
+      style={{ color: "var(--text-main)" }}
     >
-      {/* 🌈 Fondo Premium Vision Pro */}
+      {/* --------------------------- FONDO DINÁMICO --------------------------- */}
       <motion.div
-        className="absolute inset-0 bg-gradient-to-br
-                   from-[#DCCBFF]/40 via-[#C7D9FF]/30 to-[#B8F0FF]/40
-                   blur-[140px] opacity-80"
-        animate={{ opacity: [0.6, 0.9, 0.6], scale: [1, 1.04, 1] }}
-        transition={{ duration: 18, repeat: Infinity }}
+        className="absolute inset-0 -z-10"
+        style={{
+          background: isDark
+            ? "linear-gradient(to bottom right, #050014, #16002b, #020617)"
+            : "linear-gradient(to bottom right, #f5f0ff, #e8f7ff, #ffffff)",
+        }}
+        animate={{ opacity: [0.95, 1, 0.95] }}
+        transition={{ duration: 8, repeat: Infinity }}
       />
 
-      {/* ✨ Halo lateral */}
+      {/* NEBULOSAS RESPONSIVAS */}
       <motion.div
-        className="absolute top-1/3 right-0 w-96 h-96 rounded-full 
-                   bg-[#A78BFA]/30 blur-[160px]"
-        animate={{ x: [0, -25, 0], y: [0, 20, 0] }}
-        transition={{ duration: 16, repeat: Infinity }}
+        className="pointer-events-none absolute w-[500px] h-[500px] blur-[180px] rounded-full -top-32 -left-32"
+        style={{ background: current.color + "55" }}
+        animate={{ scale: [1, 1.2, 1] }}
+        transition={{ duration: 12, repeat: Infinity }}
       />
 
-      {/* ========================= */}
-      {/*    GRID PRINCIPAL        */}
-      {/* ========================= */}
-      <div className="relative z-10 grid md:grid-cols-2 gap-16 items-center">
+      <motion.div
+        className="pointer-events-none absolute w-[450px] h-[450px] blur-[160px] rounded-full bottom-0 -right-20"
+        style={{ background: current.color + "44" }}
+        animate={{ scale: [1, 1.15, 1] }}
+        transition={{ duration: 14, repeat: Infinity }}
+      />
 
-        {/* ------------------ IZQUIERDA ------------------ */}
-        <div className="space-y-8">
+      {/* ----------------------------- PARTÍCULAS ----------------------------- */}
+      {particles.current.map((p, i) => (
+        <motion.div
+          key={i}
+          className="pointer-events-none absolute rounded-full bg-white/60"
+          style={{
+            width: p.size,
+            height: p.size,
+            left: p.x + "%",
+            top: p.y + "%",
+            filter: `drop-shadow(0 0 6px ${current.color})`,
+          }}
+          animate={{ y: ["0%", "-200%"], opacity: [0, 1, 0] }}
+          transition={{
+            duration: 8 + p.size,
+            delay: p.delay,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+        />
+      ))}
 
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="inline-flex items-center gap-2 rounded-full
-                       bg-white/60 backdrop-blur-xl px-4 py-1
-                       text-xs text-[#6A42D9] font-semibold
-                       border border-white/50 shadow-sm"
-          >
-            <CubeTransparentIcon className="h-4 w-4" />
-            AR • Bienestar • Inteligencia Emocional
-          </motion.div>
+      {/* CARD PRINCIPAL CON BORDE RGB SUAVE */}
+      <div className="relative z-10 rounded-3xl border border-white/10 bg-white/5 backdrop-blur-2xl shadow-[0_0_60px_rgba(15,23,42,0.65)] overflow-hidden">
+        <div className="relative z-20 grid md:grid-cols-2 gap-14 lg:gap-20 items-center px-6 md:px-10 py-10 lg:py-16">
+          {/* ----------------------------- LEFT SIDE ----------------------------- */}
+          <div className="space-y-8">
+            <div
+              className="inline-flex items-center px-4 py-1 text-sm rounded-full border backdrop-blur-xl"
+              style={{
+                color: current.color,
+                backgroundColor: isDark
+                  ? "rgba(15,23,42,0.85)"
+                  : "rgba(255,255,255,0.85)",
+                borderColor: cardBorder,
+              }}
+            >
+              ✨ Tema emocional: {current.mood}
+            </div>
 
-          <motion.h2
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-4xl md:text-5xl lg:text-6xl font-extrabold 
-                       text-[#1A1B2E] leading-tight tracking-tight"
-          >
-            Emonical
-            <span className="block mt-1 bg-gradient-to-r
-                             from-[#A78BFA] to-[#80AFFF]
-                             bg-clip-text text-transparent drop-shadow">
-              Móvil
-            </span>
-          </motion.h2>
+            <h2 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-tight">
+              Emonical
+              <span
+                className="block mt-1 text-transparent bg-gradient-to-r bg-clip-text"
+                style={{
+                  backgroundImage: `linear-gradient(to right, ${current.color}, #22d3ee, #a855f7)`,
+                }}
+              >
+                NeoGlow
+              </span>
+            </h2>
 
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="text-gray-700 text-lg leading-relaxed max-w-lg"
-          >
-            Reconecta contigo. Emociones, actividades guiadas, AR y chat terapéutico  
-            en una experiencia fluida, suave y elegante.
-          </motion.p>
+            <p
+              className="text-base md:text-lg leading-relaxed max-w-md"
+              style={{ color: "var(--text-soft)" }}
+            >
+              Tu espacio emocional ahora vibra contigo.  
+              Interfaz reactiva según tu estado emocional.  
+              Ambientes neon, animaciones vivas y AR emocional.
+            </p>
 
-          {/* CARDS */}
-          <div className="grid gap-5">
-            {FEATURES.map((item) => {
-              const Icon = item.icon;
-              return (
-                <motion.div
-                  key={item.title}
-                  whileHover={{ scale: 1.03, x: 4 }}
-                  className="flex gap-4 items-start rounded-2xl
-                             bg-white/70 backdrop-blur-2xl 
-                             border border-white/30 
-                             px-6 py-5 shadow-[0_12px_40px_rgba(0,0,0,0.06)]"
-                >
-                  <div className="h-12 w-12 rounded-2xl bg-[#EFE9FF]
-                                  flex items-center justify-center shadow-inner">
-                    <Icon className="h-6 w-6 text-[#8F6AFD]" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-[#2D2D2D]">{item.title}</h3>
-                    <p className="text-sm text-gray-600">{item.text}</p>
-                  </div>
-                </motion.div>
-              );
-            })}
+            {/* FEATURES */}
+            <div className="grid gap-5">
+              {FEATURES.map((item, i) => {
+                const Icon = item.icon;
+                return (
+                  <motion.div
+                    key={i}
+                    variants={floatVariant}
+                    initial="initial"
+                    animate="animate"
+                    custom={i}
+                    whileHover={{ scale: 1.05, x: 6 }}
+                    className="flex gap-4 items-start rounded-2xl p-5 md:p-6 border"
+                    style={{
+                      boxShadow: `0 0 30px ${current.color}33`,
+                      background: cardBg,
+                      borderColor: cardBorder,
+                    }}
+                  >
+                    <div
+                      className="h-12 w-12 rounded-xl flex items-center justify-center"
+                      style={{
+                        background: `linear-gradient(to bottom right, ${current.color}, #22d3ee)`,
+                        boxShadow: `0 0 25px ${current.color}aa`,
+                      }}
+                    >
+                      <Icon className="h-6 w-6 text-white" />
+                    </div>
+
+                    <div>
+                      <h3
+                        className="font-semibold mb-1"
+                        style={{ color: current.color }}
+                      >
+                        {item.title}
+                      </h3>
+                      <p
+                        className="text-sm md:text-base"
+                        style={{ color: "var(--text-soft)" }}
+                      >
+                        {item.text}
+                      </p>
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </div>
+
+            {/* CTA */}
+            <motion.a
+              href="/emonical.apk"
+              download
+              whileHover={{ scale: 1.08, translateY: -2 }}
+              whileTap={{ scale: 0.97 }}
+              className="inline-flex items-center gap-3 px-9 py-3.5 rounded-full text-white font-semibold mt-4 shadow-xl"
+              style={{
+                background: `linear-gradient(to right, ${current.color}, #22d3ee, #a855f7)`,
+                boxShadow: `0 0 35px ${current.color}`,
+              }}
+            >
+              <ArrowDownTrayIcon className="h-6 w-6" />
+              Descargar APK
+            </motion.a>
           </div>
 
-          {/* CTA */}
-          <motion.a
-            href="/emonical.apk"
-            download
-            whileHover={{ scale: 1.06, y: -3 }}
-            whileTap={{ scale: 0.95 }}
-            className="inline-flex items-center gap-3 px-9 py-3.5 rounded-full
-                       bg-black text-white font-semibold
-                       shadow-[0_8px_20px_rgba(0,0,0,0.25)]
-                       hover:bg-[#1A1A1A] transition-all"
+          {/* ----------------------------- RIGHT SIDE ----------------------------- */}
+          <motion.div
+            className="relative w-full max-w-md h-[460px] md:h-[520px] mx-auto"
+            onMouseMove={(e) => x.set(e.clientX - window.innerWidth / 2)}
           >
-            <ArrowDownTrayIcon className="h-6 w-6" />
-            Descargar APK
-          </motion.a>
+            {/* MARCO RGB ANIMADO */}
+            <motion.div
+              className="absolute inset-[-3px] rounded-[38px]"
+              style={{
+                background: `conic-gradient(from 180deg, ${current.color}, #22d3ee, #a855f7, #facc15, ${current.color})`,
+                opacity: isDark ? 0.95 : 0.8,
+                filter: "blur(0.5px)",
+              }}
+              animate={{ rotate: [0, 360] }}
+              transition={{ duration: 26, repeat: Infinity, ease: "linear" }}
+            />
 
-          <p className="text-gray-600 text-sm pt-2">
-            También disponible como PWA 📲
-          </p>
-        </div>
+            {/* GLASS INTERIOR SEGÚN TEMA */}
+            <div
+              className="absolute inset-0 rounded-[34px] border"
+              style={{
+                background: isDark
+                  ? "radial-gradient(circle at top, rgba(15,23,42,0.96), rgba(2,6,23,0.98))"
+                  : "radial-gradient(circle at top, rgba(248,250,252,0.98), rgba(226,232,240,0.96))",
+                borderColor: cardBorder,
+                backdropFilter: "blur(26px)",
+              }}
+            />
 
-        {/* ------------------ DERECHA CON MOCKUPS ------------------ */}
-        <motion.div className="relative w-full max-w-md h-[420px] md:h-[500px]">
+            {/* LÍNEAS RGB EN LAS ESQUINAS (RELLENO BORDES VACÍOS) */}
+            <motion.div
+              className="pointer-events-none absolute -top-10 left-6 h-24 w-24 rounded-full"
+              style={{
+                background: `radial-gradient(circle at center, ${current.color}, transparent)`,
+                opacity: 0.7,
+              }}
+              animate={{ y: [0, 10, 0], opacity: [0.5, 0.9, 0.5] }}
+              transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+            />
+            <motion.div
+              className="pointer-events-none absolute -bottom-8 right-10 h-24 w-40 rounded-full"
+              style={{
+                background: `radial-gradient(circle at center, #22d3ee, transparent)`,
+                opacity: 0.7,
+              }}
+              animate={{ y: [0, -10, 0], opacity: [0.5, 0.9, 0.5] }}
+              transition={{ duration: 11, repeat: Infinity, ease: "easeInOut" }}
+            />
 
-          {/* 🌟 AVATARES FLOTANTES */}
-          {AVATARES.map((src, i) => {
-            const positions = [
-              "top-0 left-10",
-              "top-6 right-6",
-              "top-1/2 -left-6",
-              "bottom-10 left-3",
-              "bottom-0 right-10",
-              "top-1/3 -right-10"
-            ];
-            return (
+            {/* CONTENIDO DEL TELÉFONO */}
+            <div className="relative z-30 flex items-center justify-center h-full">
+              {/* Avatar 3D reactivo */}
               <motion.img
-                key={i}
-                custom={i}
-                variants={floatVariant}
-                initial="initial"
-                animate="animate"
-                src={src}
-                alt="Emonical Avatar"
-                className={`absolute w-20 h-20 md:w-24 md:h-24 opacity-80 
-                            drop-shadow-xl ${positions[i]}`}
-              />
-            );
-          })}
-
-          {/* Mockups principales */}
-          {PREVIEWS.map((img, i) => {
-            const positions = [
-              "-rotate-6 -left-6 top-12",
-              "rotate-3 right-0 top-4 z-30",
-              "rotate-1 left-2 bottom-10 z-20",
-              "-rotate-2 right-6 bottom-3 z-10",
-            ];
-
-            return (
-              <motion.img
-                key={i}
-                custom={i}
-                variants={floatVariant}
-                initial="initial"
-                animate={{
-                  opacity: active === i ? 1 : 0,
-                  scale: active === i ? 1 : 0.92,
+                src={current.avatar}
+                alt="Avatar emocional"
+                className="absolute top-1/2 left-1/2 w-32 h-32 -translate-x-1/2 -translate-y-[65%] z-40"
+                style={{
+                  rotate,
+                  filter: `drop-shadow(0 0 32px ${current.color})`,
                 }}
-                src={img.src}
-                alt={img.alt}
-                draggable={false}
-                className={`absolute rounded-3xl border border-white/60
-                            shadow-[0_20px_60px_rgba(0,0,0,0.15)]
-                            w-44 h-80 md:w-60 md:h-[22rem] object-cover
-                            ${positions[i]}`}
-                whileHover={{ scale: 1.05, rotate: 0 }}
+                animate={{ y: [0, -14, 0] }}
+                transition={{
+                  duration: 4,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                }}
               />
-            );
-          })}
-        </motion.div>
-      </div>
 
-      {/* Línea final */}
-      <div className="relative z-10 mt-20 h-px w-full 
-                      bg-gradient-to-r from-transparent via-[#A78BFA]/40 to-transparent" />
+              {/* Mockups MÁS GRANDES */}
+              {PREVIEWS.map((img, i) => (
+                <motion.img
+                  key={i}
+                  src={img.src}
+                  initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                  animate={{
+                    opacity: active === i ? 1 : 0,
+                    scale: active === i ? 1.04 : 0.96,
+                    y: active === i ? 0 : 30,
+                  }}
+                  transition={{ duration: 0.9 }}
+                  className="absolute w-52 h-[22rem] md:w-64 md:h-[26rem] object-cover rounded-[30px] shadow-2xl border"
+                  style={{
+                    borderColor: "rgba(148,163,184,0.45)",
+                    boxShadow: `0 0 45px ${current.color}88`,
+                  }}
+                />
+              ))}
+            </div>
+          </motion.div>
+        </div>
+      </div>
     </section>
   );
 }

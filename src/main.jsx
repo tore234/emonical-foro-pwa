@@ -8,13 +8,16 @@ import "./index.css";
 import "@fontsource/poppins/400.css";
 import "@fontsource/poppins/600.css";
 
-import { AuthProvider } from "./context/AuthContext"; // 👈 nuevo
+import { AuthProvider } from "./context/AuthContext";
+import { ThemeProvider } from "./context/ThemeContext"; // ⭐ IMPORTANTE
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <BrowserRouter>
       <AuthProvider>
-        <App />
+        <ThemeProvider>   {/* ⭐ AQUI SE AGREGA */}
+          <App />
+        </ThemeProvider>
       </AuthProvider>
     </BrowserRouter>
   </React.StrictMode>

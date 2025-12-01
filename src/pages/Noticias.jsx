@@ -5,6 +5,7 @@ import {
   SparklesIcon,
   PlayCircleIcon,
 } from "@heroicons/react/24/outline";
+import { useTheme } from "../context/ThemeContext";
 import PsicologoCard from "../components/Noticias/PsicologoCard";
 
 // ==================================================
@@ -13,32 +14,36 @@ import PsicologoCard from "../components/Noticias/PsicologoCard";
 const tipsBase = [
   {
     id: 1,
+    emoji: "😌",
     frase:
-      "“Cuando sientas ansiedad, respira profundo y enfoca tu atención en el presente. La respiración es un ancla emocional.”",
+      "Cuando sientas ansiedad, respira profundo y enfoca tu atención en el presente. La respiración es un ancla emocional.",
     autor: "Psic. Christian Daniel García",
   },
   {
     id: 2,
+    emoji: "💖",
     frase:
-      "“Permítete sentir sin juzgarte. Las emociones no se controlan… se comprenden.”",
+      "Permítete sentir sin juzgarte. Las emociones no se controlan… se comprenden.",
     autor: "Psic. Christian Daniel García",
   },
   {
     id: 3,
+    emoji: "🛌",
     frase:
-      "“Dormir bien es cuidar tu mente. No subestimes el poder del descanso emocional.”",
+      "Dormir bien es cuidar tu mente. No subestimes el poder del descanso emocional.",
     autor: "Psic. Christian Daniel García",
   },
   {
     id: 4,
+    emoji: "✍️",
     frase:
-      "“Escribir tus pensamientos ayuda a liberar tensión mental. Hazlo aunque no tenga sentido.”",
+      "Escribir tus pensamientos ayuda a liberar tensión mental. Hazlo aunque no tenga sentido.",
     autor: "Psic. Christian Daniel García",
   },
   {
     id: 5,
-    frase:
-      "“No compares tu proceso. Cada persona florece en su propio tiempo.”",
+    emoji: "🌱",
+    frase: "No compares tu proceso. Cada persona florece en su propio tiempo.",
     autor: "Emonical Bot 💫",
   },
 ];
@@ -94,6 +99,43 @@ const videosSaludMental = [
 export default function Noticias() {
   const [noticias, setNoticias] = useState(noticiasLocales);
   const [loading, setLoading] = useState(true);
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
+
+  // ===== PALETA QUE FUNCIONA EN AMBOS MODOS =====
+  const pageBgAurora = isDark
+    ? "linear-gradient(135deg, rgba(15,23,42,1), rgba(76,29,149,0.85), rgba(15,23,42,1))"
+    : "linear-gradient(135deg, rgba(219,234,254,0.9), rgba(224,231,255,0.9), rgba(244,219,255,0.85))";
+
+  const chipBg = isDark ? "rgba(15,23,42,0.85)" : "rgba(255,255,255,0.85)";
+  const chipBorder = isDark
+    ? "rgba(148,163,184,0.8)"
+    : "rgba(209,213,219,0.9)";
+  const chipText = isDark ? "#E5E7EB" : "#4B5563";
+
+  const titleColor = isDark ? "#E5E7EB" : "#1F2937";
+  const subtitleColor = isDark ? "#CBD5F5" : "#4B5563";
+
+  const accentText = isDark ? "#C4B5FD" : "#7C3AED";
+  const accentIcon = isDark ? "#A5B4FC" : "#7C3AED";
+
+  const tipCardBg = isDark ? "rgba(15,23,42,0.95)" : "rgba(255,255,255,0.96)";
+  const tipBorder = isDark
+    ? "rgba(129,140,248,0.55)"
+    : "rgba(221,214,254,1)";
+  const tipQuoteColor = isDark ? "#E5E7EB" : "#1F2937";
+
+  const newsCardBg = isDark ? "rgba(15,23,42,0.95)" : "rgba(255,255,255,0.96)";
+  const newsCardBorder = isDark
+    ? "rgba(148,163,184,0.6)"
+    : "rgba(214,226,255,1)";
+  const newsText = isDark ? "#E5E7EB" : "#111827";
+  const newsMuted = isDark ? "#9CA3AF" : "#6B7280";
+
+  const videoCardBg = isDark ? "rgba(15,23,42,0.98)" : "rgba(255,255,255,0.98)";
+  const videoCardBorder = isDark
+    ? "rgba(129,140,248,0.6)"
+    : "rgba(221,214,254,1)";
 
   useEffect(() => {
     const obtenerNoticias = async () => {
@@ -129,87 +171,121 @@ export default function Noticias() {
   }, []);
 
   return (
-    <main className="relative max-w-7xl mx-auto px-5 sm:px-8 py-16 overflow-hidden">
-
+    <main className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 sm:py-16 overflow-hidden">
       {/* ==================================================
-          AURORA / GLASS BACKGROUND
+          AURORA / BACKGROUND
       ================================================== */}
       <motion.div
-        className="absolute inset-0 bg-gradient-to-br from-[#B4C5F7]/40 via-[#CEEBF8]/40 to-[#9B6BFF]/40 blur-3xl opacity-70"
-        animate={{ opacity: [0.6, 0.9, 0.6] }}
-        transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+        className="absolute inset-0 -z-10"
+        style={{ backgroundImage: pageBgAurora }}
+        animate={{ opacity: [0.9, 1, 0.9] }}
+        transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+      />
+
+      {/* Halo central suave */}
+      <motion.div
+        className="pointer-events-none absolute -top-24 left-1/2 -translate-x-1/2 w-[420px] h-[420px] sm:w-[560px] sm:h-[560px] rounded-full blur-[140px]"
+        style={{
+          background:
+            "radial-gradient(circle, rgba(244,244,255,0.8), transparent)",
+        }}
+        animate={{ opacity: [0.3, 0.6, 0.3] }}
+        transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
       />
 
       {/* ==================================================
           ENCABEZADO
       ================================================== */}
-      <header className="relative z-10 text-center mb-16 space-y-4">
-        
+      <header className="relative z-10 text-center mb-12 sm:mb-16 space-y-4 px-2">
         {/* Chip superior */}
         <motion.div
           initial={{ opacity: 0, y: -8 }}
           animate={{ opacity: 1, y: 0 }}
-          className="inline-flex items-center gap-2 rounded-full 
-                     bg-white/70 backdrop-blur-md px-4 py-1 
-                     text-xs font-semibold text-[#6B4FD8] 
-                     border border-white/60 shadow-sm"
+          className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-[11px] sm:text-xs font-semibold border shadow-sm"
+          style={{ backgroundColor: chipBg, borderColor: chipBorder, color: chipText }}
         >
           <NewspaperIcon className="h-4 w-4" />
-          Contenido curado para tu bienestar
+          Actualizamos tu universo de bienestar ✨
         </motion.div>
 
         {/* Título principal */}
         <motion.h2
-          className="text-4xl md:text-5xl font-extrabold text-[#2A2055]"
+          className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight"
+          style={{ color: titleColor }}
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
         >
-          Noticias & Tips
+          Noticias & Tips para tu mente 💜
         </motion.h2>
 
         {/* Descripción */}
-        <p className="text-[#4B4B4B] max-w-2xl mx-auto text-base md:text-lg leading-relaxed">
-          Explora contenido reciente sobre salud mental, bienestar y equilibrio emocional 🌿
+        <p
+          className="max-w-2xl mx-auto text-sm sm:text-base md:text-lg leading-relaxed"
+          style={{ color: subtitleColor }}
+        >
+          Descubre recursos breves, artículos recientes y videos pensados para
+          acompañarte en tu cuidado emocional día a día 🌿
         </p>
       </header>
 
       {/* ==================================================
           TIPS DEL DÍA
       ================================================== */}
-      <section className="relative z-10 mb-20">
-        <div className="flex items-center justify-between mb-4 flex-wrap">
-          <h3 className="text-2xl font-bold text-[#8A4FF2] flex items-center gap-2">
-            <SparklesIcon className="h-6 w-6 text-[#9B6BFF]" />
+      <section className="relative z-10 mb-14 sm:mb-20">
+        <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
+          <h3
+            className="text-lg sm:text-2xl font-bold flex items-center gap-2"
+            style={{ color: accentText }}
+          >
+            <SparklesIcon className="h-6 w-6" style={{ color: accentIcon }} />
             Tips del día
           </h3>
-          <p className="text-xs text-gray-500">Consejos breves que acompañan 💫</p>
+          <p className="text-[11px] sm:text-xs" style={{ color: subtitleColor }}>
+            Pequeños recordatorios para suavizar tu día ✨
+          </p>
         </div>
 
         {/* Lista horizontal */}
         <motion.div
-          className="flex gap-6 overflow-x-auto scrollbar-hide pb-4"
+          className="flex gap-4 sm:gap-6 overflow-x-auto scrollbar-hide pb-2 sm:pb-3 -mx-1 px-1"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
         >
           {tipsBase.map((tip) => (
             <motion.article
               key={tip.id}
-              whileHover={{ scale: 1.05, y: -3 }}
-              className="min-w-[280px] sm:min-w-[320px] 
-                         bg-white/60 backdrop-blur-xl 
-                         border border-[#E5D9FF] 
-                         shadow-xl rounded-2xl p-6 
-                         relative overflow-hidden"
+              whileHover={{ scale: 1.03, y: -2 }}
+              transition={{ duration: 0.18 }}
+              className="min-w-[240px] sm:min-w-[280px] md:min-w-[320px] 
+                         rounded-2xl p-4 sm:p-5 relative overflow-hidden border shadow-lg"
+              style={{
+                backgroundColor: tipCardBg,
+                borderColor: tipBorder,
+              }}
             >
-              <span className="absolute -left-4 -top-6 text-[100px] text-[#F0E8FF] select-none">
-                “
-              </span>
+              {/* Emoji + numerito */}
+              <div className="flex items-center justify-between mb-3 text-xs sm:text-sm font-semibold">
+                <span className="inline-flex items-center gap-1">
+                  <span className="text-lg sm:text-xl">{tip.emoji}</span>
+                  <span style={{ color: subtitleColor }}>Tip #{tip.id}</span>
+                </span>
+                <span className="text-[10px]" style={{ color: subtitleColor }}>
+                  ⏱ 10 seg
+                </span>
+              </div>
 
-              <p className="text-[#2A2055] italic mb-4 leading-relaxed relative z-10">
-                {tip.frase}
+              {/* Frase */}
+              <p
+                className="italic text-xs sm:text-sm md:text-base leading-relaxed mb-3"
+                style={{ color: tipQuoteColor }}
+              >
+                “{tip.frase}”
               </p>
 
-              <span className="text-right block text-sm font-semibold text-[#8A4FF2]">
+              <span
+                className="text-right block text-[11px] sm:text-xs font-semibold"
+                style={{ color: accentText }}
+              >
                 — {tip.autor}
               </span>
             </motion.article>
@@ -220,42 +296,65 @@ export default function Noticias() {
       {/* ==================================================
           NOTICIAS
       ================================================== */}
-      <section className="relative z-10 mb-20">
-        <h3 className="text-2xl font-bold text-[#8A4FF2] mb-6">
-          Últimas noticias sobre bienestar
-        </h3>
+      <section className="relative z-10 mb-14 sm:mb-20">
+        <div className="flex items-center justify-between gap-2 mb-5 flex-wrap">
+          <h3
+            className="text-lg sm:text-2xl font-bold flex items-center gap-2"
+            style={{ color: accentText }}
+          >
+            <NewspaperIcon className="h-6 w-6" style={{ color: accentIcon }} />
+            Últimas noticias sobre bienestar 🌍
+          </h3>
+          <p className="text-[11px] sm:text-xs" style={{ color: subtitleColor }}>
+            Fuentes externas + toques Emonical 💫
+          </p>
+        </div>
 
         {loading ? (
-          <div className="flex flex-col items-center py-10 text-gray-500">
-            <SparklesIcon className="h-6 w-6 animate-spin text-[#9B6BFF]" />
-            Cargando noticias...
+          <div className="flex flex-col items-center py-10 text-xs sm:text-sm" style={{ color: subtitleColor }}>
+            <SparklesIcon className="h-6 w-6 animate-spin" style={{ color: accentIcon }} />
+            <span className="mt-2">Cargando noticias para ti...</span>
           </div>
         ) : (
-          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-
+          <div className="grid gap-6 sm:gap-7 md:gap-8 sm:grid-cols-2 lg:grid-cols-3">
             {noticias.map((item, index) => (
               <motion.article
                 key={item.id}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.06 }}
-                viewport={{ once: true }}
-                className="bg-white/70 backdrop-blur-xl 
-                           border border-[#E5D9FF] p-6 rounded-3xl 
-                           shadow-lg hover:shadow-2xl 
-                           hover:-translate-y-1 transition-all"
+                transition={{ delay: index * 0.04 }}
+                viewport={{ once: true, amount: 0.3 }}
+                className="rounded-2xl p-5 sm:p-6 border shadow-lg hover:shadow-2xl 
+                           hover:-translate-y-1 transition-all flex flex-col justify-between"
+                style={{
+                  backgroundColor: newsCardBg,
+                  borderColor: newsCardBorder,
+                }}
               >
-                <h4 className="text-lg font-semibold text-[#2A2055] mb-2">
-                  {item.titulo}
-                </h4>
+                <div>
+                  <h4
+                    className="text-base sm:text-lg font-semibold mb-2"
+                    style={{ color: newsText }}
+                  >
+                    {item.titulo}
+                  </h4>
 
-                <p className="text-gray-700 text-sm leading-relaxed mb-4 line-clamp-4">
-                  {item.texto}
-                </p>
+                  <p
+                    className="text-xs sm:text-sm leading-relaxed mb-4 line-clamp-4"
+                    style={{ color: newsMuted }}
+                  >
+                    {item.texto}
+                  </p>
+                </div>
 
-                <div className="text-[11px] text-gray-600 flex justify-between border-t pt-2">
-                  <span className="font-medium">{item.autor}</span>
-                  <span>{item.fecha}</span>
+                <div
+                  className="pt-2 mt-auto flex items-center justify-between border-t text-[10px] sm:text-[11px]"
+                  style={{ borderColor: isDark ? "rgba(55,65,81,0.7)" : "#E5E7EB", color: newsMuted }}
+                >
+                  <span className="font-medium flex items-center gap-1">
+                    📝 {item.autor}
+                  </span>
+                  <span>📅 {item.fecha}</span>
                 </div>
               </motion.article>
             ))}
@@ -266,38 +365,50 @@ export default function Noticias() {
       {/* ==================================================
           VIDEOS
       ================================================== */}
-      <section className="relative z-10 mb-20">
-
-        <div className="text-center mb-5">
-          <h3 className="text-2xl font-bold text-[#8A4FF2] flex justify-center gap-2 mb-2">
-            <PlayCircleIcon className="h-7 w-7 text-[#9B6BFF]" />
-            Videos que inspiran bienestar 🌸
+      <section className="relative z-10 mb-14 sm:mb-20">
+        <div className="text-center mb-5 sm:mb-6 px-2">
+          <h3
+            className="text-lg sm:text-2xl font-bold flex justify-center gap-2 mb-2"
+            style={{ color: accentText }}
+          >
+            <PlayCircleIcon className="h-6 w-6 sm:h-7 sm:w-7" style={{ color: accentIcon }} />
+            Videos que inspiran bienestar 🎬
           </h3>
-          <p className="text-gray-700 max-w-xl mx-auto leading-relaxed">
-            Contenido audiovisual para relajarte, reflexionar y reconectar 💫
+          <p
+            className="max-w-xl mx-auto text-xs sm:text-sm md:text-base leading-relaxed"
+            style={{ color: subtitleColor }}
+          >
+            Tómate una pausa consciente: elige un video, ponte audífonos y regálate unos minutos para ti 💫
           </p>
         </div>
 
-        <div className="flex gap-6 overflow-x-auto pb-8 scrollbar-hide">
+        <div className="flex gap-4 sm:gap-6 overflow-x-auto pb-6 sm:pb-8 scrollbar-hide -mx-1 px-1">
           {videosSaludMental.map((video) => (
             <motion.article
               key={video.id}
-              whileHover={{ scale: 1.04, y: -2 }}
-              transition={{ duration: 0.3 }}
-              className="min-w-[300px] sm:min-w-[360px] 
-                         bg-white/70 backdrop-blur-xl 
-                         border border-[#E5D9FF] shadow-lg 
-                         rounded-2xl overflow-hidden"
+              whileHover={{ scale: 1.03, y: -2 }}
+              transition={{ duration: 0.25 }}
+              className="min-w-[260px] sm:min-w-[320px] md:min-w-[360px] 
+                         rounded-2xl overflow-hidden border shadow-lg flex flex-col"
+              style={{
+                backgroundColor: videoCardBg,
+                borderColor: videoCardBorder,
+              }}
             >
-              <iframe
-                src={video.url}
-                title={video.titulo}
-                className="w-full h-56"
-                allowFullScreen
-              ></iframe>
+              <div className="w-full aspect-video">
+                <iframe
+                  src={video.url}
+                  title={video.titulo}
+                  className="w-full h-full"
+                  allowFullScreen
+                />
+              </div>
 
-              <div className="p-4 text-center">
-                <h4 className="text-[#2A2055] font-semibold text-sm leading-snug">
+              <div className="p-3 sm:p-4 text-center">
+                <h4
+                  className="font-semibold text-xs sm:text-sm md:text-base leading-snug"
+                  style={{ color: newsText }}
+                >
                   {video.titulo}
                 </h4>
               </div>
@@ -309,7 +420,7 @@ export default function Noticias() {
       {/* ==================================================
           PSICÓLOGO
       ================================================== */}
-      <section className="relative z-10">
+      <section className="relative z-10 pb-4 sm:pb-6">
         <PsicologoCard />
       </section>
     </main>

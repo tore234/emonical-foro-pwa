@@ -1,12 +1,8 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { db } from "../firebase";
-import {
-  collection,
-  getDocs,
-  query,
-  orderBy
-} from "firebase/firestore";
+
+import { collection, getDocs, query, orderBy } from "firebase/firestore";
 
 import { ForoForm, ForoList } from "../components/Foro";
 import WakeBotButton from "../components/Bot/WakeBotButton";
@@ -15,6 +11,14 @@ import {
   ChatBubbleOvalLeftEllipsisIcon,
   SparklesIcon,
 } from "@heroicons/react/24/solid";
+
+// 🌌 Estrellas de fondo
+const STARS = Array.from({ length: 40 }, () => ({
+  x: Math.random() * 100,
+  y: Math.random() * 100,
+  size: Math.random() * 2 + 1,
+  delay: Math.random() * 6,
+}));
 
 // 🌟 Frases motivacionales del bot
 const FRASES_BOT = [
@@ -52,14 +56,9 @@ export default function Foro() {
       try {
         let q;
 
-        // 🔎 VERIFICAMOS SI EXISTE timestamp
         try {
-          q = query(
-            collection(db, "comentarios"),
-            orderBy("timestamp", "desc")
-          );
+          q = query(collection(db, "comentarios"), orderBy("timestamp", "desc"));
         } catch {
-          console.warn("⚠ Firestore sin 'timestamp'. Orden desactivado.");
           q = query(collection(db, "comentarios"));
         }
 
@@ -70,106 +69,218 @@ export default function Foro() {
           ...doc.data(),
         }));
 
-        console.log("🔥 Datos Firestore cargados:", data);
-
         let merged = [...data];
 
-        // Mensaje emocional diario
-        if (typeof window !== "undefined") {
-          const hoy = new Date().toDateString();
-          const ultimaFrase = localStorage.getItem("ultimaFrase");
+        const hoy = new Date().toDateString();
+        const ultimaFrase = localStorage.getItem("ultimaFrase");
 
-          if (ultimaFrase !== hoy) {
-            merged.unshift(crearMensajeDiario());
-            localStorage.setItem("ultimaFrase", hoy);
-          }
+        if (ultimaFrase !== hoy) {
+          merged.unshift(crearMensajeDiario());
+          localStorage.setItem("ultimaFrase", hoy);
         }
 
         if (isMounted) setPosts(merged);
       } catch (error) {
-        console.error("Error al cargar posts:", error);
-        if (isMounted)
-          setErrorMsg("No pudimos cargar las publicaciones. Inténtalo de nuevo 💜");
+        setErrorMsg("No pudimos cargar las publicaciones 💜");
       } finally {
         if (isMounted) setLoading(false);
       }
     };
 
     cargarPosts();
-
     return () => {
       isMounted = false;
     };
   }, []);
 
   return (
-    <section className="relative max-w-6xl mx-auto px-4 sm:px-8 py-16 overflow-hidden">
-      
-      {/* 💜 Fondo aurora suave */}
+    <section
+      className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20 overflow-hidden"
+      style={{ color: "var(--text-main)" }}
+    >
+      {/* ================== FONDO GALÁCTICO (usa variables de tema) ================== */}
+      {/* Capa base */}
       <motion.div
-        className="absolute inset-0 bg-gradient-to-br 
-                   from-[#D5B6FF]/40 via-[#B4C5F7]/35 to-[#9B6BFF]/30 
-                   blur-[120px]"
-        animate={{ opacity: [0.5, 0.85, 0.5] }}
-        transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
+        className="absolute inset-0 -z-30 transition-all"
+        style={{
+          background:
+            "linear-gradient(135deg, var(--bg-main), var(--bg-deep))",
+        }}
+        animate={{ opacity: [0.9, 1, 0.9] }}
+        transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
       />
 
-      {/* ⭐ Encabezado */}
-      <header className="relative z-10 text-center mb-14">
-        <motion.h2
-          className="text-4xl md:text-5xl font-extrabold text-[#1F1B39] 
-                     flex justify-center items-center gap-3"
-          initial={{ opacity: 0, y: -15 }}
+      {/* Auroras / glows RGB */}
+      <motion.div
+        className="absolute -top-32 -left-16 w-[260px] h-[260px] sm:w-[360px] sm:h-[360px] rounded-full blur-[120px] -z-20"
+        style={{
+          background:
+            "radial-gradient(circle at 20% 20%, var(--glow-purple), transparent 60%)",
+        }}
+        animate={{ opacity: [0.4, 0.8, 0.4] }}
+        transition={{ duration: 14, repeat: Infinity, ease: "easeInOut" }}
+      />
+
+      <motion.div
+        className="absolute bottom-[-4rem] right-[-2rem] w-[280px] h-[280px] sm:w-[380px] sm:h-[380px] rounded-full blur-[130px] -z-20"
+        style={{
+          background:
+            "radial-gradient(circle at 70% 80%, var(--glow-blue), transparent 60%)",
+        }}
+        animate={{ x: [0, 14, 0], y: [0, -18, 0] }}
+        transition={{ duration: 16, repeat: Infinity, ease: "easeInOut" }}
+      />
+
+      {/* Estrellas flotando */}
+      {STARS.map((star, i) => (
+        <motion.div
+          key={i}
+          className="pointer-events-none absolute rounded-full bg-white/95"
+          style={{
+            width: star.size,
+            height: star.size,
+            left: `${star.x}%`,
+            top: `${star.y}%`,
+            filter: "drop-shadow(0 0 8px var(--glow-purple))",
+          }}
+          animate={{ opacity: [0, 1, 0.3, 1] }}
+          transition={{
+            duration: 6 + star.size,
+            delay: star.delay,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+        />
+      ))}
+
+      {/* ================== HEADER ================== */}
+      <header className="relative z-10 text-center mb-12 sm:mb-16 space-y-4">
+        {/* Chip superior */}
+        <motion.div
+          initial={{ opacity: 0, y: -8 }}
           animate={{ opacity: 1, y: 0 }}
+          className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-[11px] sm:text-xs font-semibold border backdrop-blur-xl"
+          style={{
+            background: "var(--card-bg)",
+            borderColor: "var(--card-border)",
+            boxShadow: "0 0 18px var(--shadow-soft)",
+            color: "var(--text-soft)",
+          }}
         >
-          <ChatBubbleOvalLeftEllipsisIcon className="h-10 w-10 text-[#9B6BFF]" />
+          <SparklesIcon className="h-4 w-4" style={{ color: "var(--glow-purple)" }} />
+          Espacio seguro para compartir y escuchar 💫
+        </motion.div>
+
+        {/* Título principal */}
+        <motion.h2
+          className="text-3xl sm:text-4xl md:text-5xl font-extrabold flex justify-center items-center gap-3"
+          style={{
+            color: "var(--text-main)",
+            textShadow: "0 0 18px var(--glow-purple)",
+          }}
+          initial={{ opacity: 0, y: -18 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+        >
+          <ChatBubbleOvalLeftEllipsisIcon
+            className="h-9 w-9 sm:h-11 sm:w-11"
+            style={{
+              color: "var(--glow-purple)",
+              filter: "drop-shadow(0 0 6px var(--glow-purple))",
+            }}
+          />
           Foro Emonical
         </motion.h2>
 
-        <p className="mt-3 text-gray-700 max-w-2xl mx-auto text-base md:text-lg">
-          Comparte tus emociones y recibe apoyo de la comunidad 💜
-        </p>
+        {/* Descripción */}
+        <motion.p
+          className="mt-3 max-w-xl mx-auto text-sm sm:text-base md:text-lg leading-relaxed px-2"
+          style={{ color: "var(--text-soft)" }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.3 }}
+        >
+          Comparte tus emociones, reflexiones y encuentra apoyo emocional  
+          dentro de una comunidad segura, empática y luminosa 💜
+        </motion.p>
       </header>
 
-      {/* 📝 Formulario + Lista */}
-      <div className="relative z-10 space-y-12">
+      {/* ================== CONTENIDO PRINCIPAL ================== */}
+      <div className="relative z-10 space-y-12 sm:space-y-14">
+        {/* Marco RGB suave detrás del formulario */}
+        <motion.div
+          className="absolute inset-x-2 sm:inset-x-6 -top-4 h-3/5 rounded-[32px] bg-[conic-gradient(from_180deg,rgba(167,139,250,0.85),rgba(56,189,248,0.85),rgba(244,114,182,0.85),rgba(167,139,250,0.85))] opacity-60 blur-[2px] -z-10"
+          animate={{ rotate: [0, 360] }}
+          transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
+        />
 
-        {/* Formulario Glass */}
-        <div className="bg-white/70 backdrop-blur-2xl 
-                        rounded-3xl p-6 border border-white/50 
-                        shadow-[0_8px_30px_rgba(155,107,255,0.15)]">
+        {/* Formulario */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.96, y: 8 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="rounded-3xl p-5 sm:p-7 backdrop-blur-3xl border"
+          style={{
+            background: "var(--card-bg)",
+            borderColor: "var(--card-border)",
+            boxShadow: "0 0 26px var(--shadow-soft)",
+          }}
+        >
           <ForoForm setPosts={setPosts} />
-        </div>
+        </motion.div>
 
-        {/* Loader / Error / Posts */}
+        {/* Estado carga / error / lista */}
         {loading ? (
           <motion.div
-            className="flex justify-center py-12 text-[#9B6BFF] font-medium"
+            className="flex justify-center items-center py-14 sm:py-16 font-semibold text-sm sm:text-lg gap-2"
+            style={{ color: "var(--glow-purple)" }}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
           >
-            <SparklesIcon className="h-6 w-6 animate-spin mr-2" />
-            Cargando publicaciones...
+            <SparklesIcon className="h-6 w-6 sm:h-7 sm:w-7 animate-spin" />
+            <span>Cargando publicaciones...</span>
           </motion.div>
         ) : errorMsg ? (
-          <div className="text-center text-sm text-red-500 
-                          bg-white/80 backdrop-blur-xl 
-                          rounded-2xl px-4 py-3 max-w-md mx-auto shadow">
+          <div
+            className="text-center text-xs sm:text-sm rounded-2xl px-4 py-4 max-w-md mx-auto backdrop-blur-xl shadow border"
+            style={{
+              background: "var(--card-bg)",
+              borderColor: "var(--card-border)",
+              color: "var(--text-main)",
+            }}
+          >
             {errorMsg}
           </div>
         ) : posts.length === 0 ? (
-          <div className="text-center text-gray-600 
-                          bg-white/70 backdrop-blur-xl 
-                          rounded-2xl px-4 py-6 max-w-md mx-auto shadow">
-            No hay publicaciones aún. ¡Comparte tu primera experiencia! 💌
+          <div
+            className="text-center text-xs sm:text-sm rounded-2xl px-4 py-6 max-w-md mx-auto backdrop-blur-xl shadow border"
+            style={{
+              background: "var(--card-bg)",
+              color: "var(--text-soft)",
+              borderColor: "var(--card-border)",
+            }}
+          >
+            No hay publicaciones todavía.
+            <span
+              className="block mt-2 font-semibold"
+              style={{ color: "var(--glow-purple)" }}
+            >
+              💜 ¡Sé la primera persona en compartir algo!
+            </span>
           </div>
         ) : (
-          <ForoList posts={posts} />
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <ForoList posts={posts} />
+          </motion.div>
         )}
       </div>
 
-      {/* 🤖 Bot despertar */}
-      <div className="fixed bottom-6 right-6 z-20">
+      {/* BOT WAKE BUTTON */}
+      <div className="fixed bottom-5 right-5 sm:bottom-6 sm:right-6 z-20">
         <WakeBotButton />
       </div>
     </section>

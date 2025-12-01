@@ -19,19 +19,26 @@ import miedoImg from "../../assets/emociones/emonical_avatar_miedo.png";
 import tristezaImg from "../../assets/emociones/emonical_avatar_tristeza.png";
 
 const EMOCIONES = [
-  { id: "neutral", label: "Tranquil@", image: neutralImg },
-  { id: "ansiedad", label: "Ansiedad", image: ansiedadImg },
-  { id: "enojo", label: "Enojo", image: enojoImg },
-  { id: "estres", label: "Estrés", image: estresImg },
-  { id: "miedo", label: "Miedo", image: miedoImg },
-  { id: "tristeza", label: "Tristeza", image: tristezaImg },
+  { id: "neutral", label: "Tranquil@", image: neutralImg, emoji: "😌" },
+  { id: "ansiedad", label: "Ansiedad", image: ansiedadImg, emoji: "😰" },
+  { id: "enojo", label: "Enojo", image: enojoImg, emoji: "😠" },
+  { id: "estres", label: "Estrés", image: estresImg, emoji: "😵‍💫" },
+  { id: "miedo", label: "Miedo", image: miedoImg, emoji: "😨" },
+  { id: "tristeza", label: "Tristeza", image: tristezaImg, emoji: "😢" },
 ];
+
+// mini estrellas alrededor del formulario
+const FORM_STARS = Array.from({ length: 24 }, () => ({
+  x: Math.random() * 100,
+  y: Math.random() * 100,
+  size: Math.random() * 2 + 1,
+  delay: Math.random() * 6,
+}));
 
 export default function ForoForm({ setPosts }) {
   const [loading, setLoading] = useState(false);
   const [botRespondio, setBotRespondio] = useState(false);
   const [emocion, setEmocion] = useState("neutral");
-
   const [focusInput, setFocusInput] = useState(false);
 
   const handleSubmit = async (e) => {
@@ -43,7 +50,8 @@ export default function ForoForm({ setPosts }) {
 
     const texto = formData.get("texto")?.toString().trim();
     const autor = formData.get("autor")?.toString().trim() || "Anónimo";
-    const titulo = formData.get("titulo")?.toString().trim() || "Pensamiento 💭";
+    const titulo =
+      formData.get("titulo")?.toString().trim() || "Pensamiento 💭";
 
     if (!texto) return;
 
@@ -53,7 +61,6 @@ export default function ForoForm({ setPosts }) {
       year: "numeric",
     });
 
-    // ================== NUEVO POST ==================
     const nuevoPost = {
       autor,
       titulo,
@@ -64,18 +71,15 @@ export default function ForoForm({ setPosts }) {
       timestamp: serverTimestamp(),
     };
 
-    // Guardar en Firestore
     const ref = await addDoc(collection(db, "comentarios"), nuevoPost);
     nuevoPost.id = ref.id;
 
-    // Actualizar lista
     setPosts((prev) => [nuevoPost, ...prev]);
     form.reset();
 
     setLoading(true);
     setBotRespondio(false);
 
-    // ================== BOT ==================
     try {
       const textoParaBot = `Emoción: ${emocion}. Usuario escribió: ${texto}`;
       const respuesta = await askForumBot(textoParaBot);
@@ -92,7 +96,6 @@ export default function ForoForm({ setPosts }) {
       const refBot = await addDoc(collection(db, "comentarios"), respuestaBot);
       respuestaBot.id = refBot.id;
 
-      // Insertar debajo del comentario original
       setPosts((prev) => {
         const arr = [...prev];
         const index = arr.findIndex((p) => p.id === nuevoPost.id);
@@ -111,81 +114,224 @@ export default function ForoForm({ setPosts }) {
     setLoading(false);
   };
 
+  const emocionSeleccionada =
+    EMOCIONES.find((e) => e.id === emocion) || EMOCIONES[0];
+
   return (
     <motion.form
       onSubmit={handleSubmit}
       initial={{ opacity: 0, y: 15 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.55 }}
-      className={`relative z-10 bg-white/80 backdrop-blur-2xl rounded-3xl p-8 border border-white/40 shadow-[0_10px_35px_rgba(180,140,255,0.18)] grid gap-6 transition-all
-        ${focusInput ? "shadow-[0_15px_45px_rgba(180,140,255,0.25)] scale-[1.01]" : ""}`}
+      className="
+        relative z-10 rounded-3xl 
+        p-6 sm:p-8 grid gap-6
+        border backdrop-blur-3xl
+        overflow-hidden
+      "
+      style={{
+        background: "var(--card-bg)",
+        borderColor: "var(--card-border)",
+        boxShadow: focusInput
+          ? "0 0 45px var(--glow-purple)"
+          : "0 0 25px var(--shadow-soft)",
+        color: "var(--text-main)",
+      }}
     >
-      {/* ====== ENCABEZADO ====== */}
-      <div className="flex justify-center items-center gap-2 mb-2">
-        <PencilSquareIcon className="h-6 w-6 text-[#9B6BFF]" />
-        <h3 className="text-xl font-bold text-[#2D2D2D]">Comparte tu experiencia 💬</h3>
-      </div>
+      {/* halo RGB alrededor */}
+      <motion.div
+        className="pointer-events-none absolute -inset-[1px] rounded-[26px] -z-10 opacity-70"
+        style={{
+          background:
+            "conic-gradient(from_180deg, rgba(167,139,250,0.85), rgba(56,189,248,0.9), rgba(244,114,182,0.9), rgba(167,139,250,0.85))",
+        }}
+        animate={{ rotate: [0, 360] }}
+        transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
+      />
 
-      {/* ====== INPUTS ====== */}
-      <div className="grid gap-3">
-        <input
-          name="autor"
-          type="text"
-          placeholder="Tu nombre (opcional)"
-          onFocus={() => setFocusInput(true)}
-          onBlur={() => setFocusInput(false)}
-          className="rounded-2xl border bg-white/70 px-4 py-3 text-sm"
+      {/* estrellitas internas */}
+      {FORM_STARS.map((star, i) => (
+        <motion.div
+          key={i}
+          className="pointer-events-none absolute rounded-full bg-white/90"
+          style={{
+            width: star.size,
+            height: star.size,
+            left: `${star.x}%`,
+            top: `${star.y}%`,
+            filter: "drop-shadow(0 0 6px var(--glow-purple))",
+          }}
+          animate={{ opacity: [0, 1, 0.3, 1] }}
+          transition={{
+            duration: 6 + star.size,
+            delay: star.delay,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
         />
+      ))}
 
-        <input
-          name="titulo"
-          type="text"
-          placeholder="Título"
-          onFocus={() => setFocusInput(true)}
-          onBlur={() => setFocusInput(false)}
-          className="rounded-2xl border bg-white/70 px-4 py-3 text-sm"
-        />
-
-        {/* ===== SELECTOR EMOCIONES ===== */}
-        <p className="text-xs font-semibold text-gray-600 mt-2">¿Cómo te sientes ahora?</p>
-
-        <div className="flex flex-wrap gap-2">
-          {EMOCIONES.map((emo) => (
-            <motion.button
-              key={emo.id}
-              type="button"
-              whileTap={{ scale: 0.93 }}
-              onClick={() => setEmocion(emo.id)}
-              className={`flex items-center gap-2 px-3 py-2 rounded-2xl text-xs border transition shadow-sm
-                ${
-                  emocion === emo.id
-                    ? "border-[#9B6BFF] bg-[#F3EEFF]"
-                    : "border-transparent bg-white/70 hover:bg-gray-100"
-                }`}
-            >
-              <img src={emo.image} className="w-7 h-7 rounded-full" />
-              {emo.label}
-            </motion.button>
-          ))}
+      {/* HEADER */}
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-1 relative">
+        <div className="flex justify-center md:justify-start items-center gap-2">
+          <PencilSquareIcon
+            className="h-6 w-6"
+            style={{ color: "var(--glow-purple)" }}
+          />
+          <h3 className="text-lg sm:text-xl font-bold">
+            Comparte tu experiencia 💬
+          </h3>
         </div>
 
-        {/* ===== TEXTO PRINCIPAL ===== */}
-        <textarea
-          name="texto"
-          required
-          placeholder="Escribe tu mensaje..."
-          onFocus={() => setFocusInput(true)}
-          onBlur={() => setFocusInput(false)}
-          className="rounded-2xl border bg-white/70 px-4 py-3 text-sm h-36 resize-none"
-        />
+        {/* badge emoción actual */}
+        <div className="flex items-center justify-center md:justify-end gap-2 text-xs sm:text-sm">
+          <span
+            className="px-3 py-1 rounded-full border backdrop-blur-xl flex items-center gap-2"
+            style={{
+              background: "var(--input-bg)",
+              borderColor: "var(--card-border)",
+              color: "var(--text-soft)",
+            }}
+          >
+            <img
+              src={emocionSeleccionada.image}
+              alt={emocionSeleccionada.label}
+              className="w-7 h-7 rounded-full"
+            />
+            <span className="font-semibold">
+              Estado actual: {emocionSeleccionada.emoji}{" "}
+              {emocionSeleccionada.label}
+            </span>
+          </span>
+        </div>
       </div>
 
-      {/* ===== BOTÓN SUBMIT ===== */}
+      {/* INPUTS */}
+      <div className="grid gap-3 sm:gap-4 relative">
+        {/* Autor */}
+        <div className="grid gap-1">
+          <label className="text-[11px] sm:text-xs font-semibold tracking-wide">
+            Nombre
+            <span style={{ color: "var(--text-soft)" }}> (opcional)</span>
+          </label>
+          <input
+            name="autor"
+            type="text"
+            placeholder="Cómo quieres que te vean en el foro ✨"
+            onFocus={() => setFocusInput(true)}
+            onBlur={() => setFocusInput(false)}
+            className="rounded-2xl px-4 py-2.5 text-sm transition border outline-none w-full"
+            style={{
+              background: "var(--input-bg)",
+              borderColor: "var(--input-border)",
+              color: "var(--text-main)",
+            }}
+          />
+        </div>
+
+        {/* Título */}
+        <div className="grid gap-1">
+          <label className="text-[11px] sm:text-xs font-semibold tracking-wide">
+            Título de tu publicación
+          </label>
+          <input
+            name="titulo"
+            type="text"
+            placeholder="Ej. Hoy me sentí abrumad@, pero aprendí algo…"
+            onFocus={() => setFocusInput(true)}
+            onBlur={() => setFocusInput(false)}
+            className="rounded-2xl px-4 py-2.5 text-sm transition border outline-none w-full"
+            style={{
+              background: "var(--input-bg)",
+              borderColor: "var(--input-border)",
+              color: "var(--text-main)",
+            }}
+          />
+        </div>
+
+        {/* Selector emociones */}
+        <div className="grid gap-2 mt-1">
+          <p
+            className="text-[11px] sm:text-xs font-semibold uppercase tracking-wide"
+            style={{ color: "var(--glow-purple)" }}
+          >
+            ¿Cómo te sientes ahora? 🌙
+          </p>
+
+          <div className="flex flex-wrap gap-2">
+            {EMOCIONES.map((emo) => (
+              <motion.button
+                key={emo.id}
+                type="button"
+                whileTap={{ scale: 0.93 }}
+                onClick={() => setEmocion(emo.id)}
+                className="flex items-center gap-2 px-3 py-2 rounded-2xl text-[11px] sm:text-xs transition border"
+                style={{
+                  background:
+                    emocion === emo.id
+                      ? "var(--glow-purple)"
+                      : "var(--input-bg)",
+                  borderColor: "var(--card-border)",
+                  color: emocion === emo.id ? "#fff" : "var(--text-main)",
+                  boxShadow:
+                    emocion === emo.id
+                      ? "0 0 14px var(--glow-purple)"
+                      : "none",
+                }}
+              >
+                <img
+                  src={emo.image}
+                  alt={emo.label}
+                  className="w-7 h-7 rounded-full"
+                />
+                <span>
+                  {emo.emoji} {emo.label}
+                </span>
+              </motion.button>
+            ))}
+          </div>
+        </div>
+
+        {/* Texto principal */}
+        <div className="grid gap-1 mt-2">
+          <label className="text-[11px] sm:text-xs font-semibold tracking-wide">
+            Cuéntanos lo que llevas dentro 💭
+          </label>
+          <textarea
+            name="texto"
+            required
+            placeholder="Escribe lo que quieras compartir. Puedes hablar de tu día, de algo que te preocupa o de algo que quieras celebrar 💜"
+            onFocus={() => setFocusInput(true)}
+            onBlur={() => setFocusInput(false)}
+            className="rounded-2xl px-4 py-3 text-sm h-32 sm:h-36 resize-none border outline-none transition w-full"
+            style={{
+              background: "var(--input-bg)",
+              borderColor: "var(--input-border)",
+              color: "var(--text-main)",
+            }}
+          />
+          <span
+            className="text-[10px] sm:text-xs mt-1"
+            style={{ color: "var(--text-soft)" }}
+          >
+            Recuerda: este es un espacio de respeto. Evita compartir datos muy
+            personales o identificables 🌿
+          </span>
+        </div>
+      </div>
+
+      {/* BOTÓN */}
       <motion.button
         type="submit"
         whileTap={{ scale: 0.96 }}
         disabled={loading}
-        className="flex items-center justify-center gap-2 py-3 rounded-2xl font-semibold text-white bg-gradient-to-r from-[#A78BFA] to-[#8BB8FF] shadow-lg"
+        className="flex items-center justify-center gap-2 py-3 rounded-2xl font-semibold text-sm sm:text-base transition disabled:opacity-70 disabled:cursor-not-allowed"
+        style={{
+          background:
+            "linear-gradient(135deg, var(--glow-purple), var(--glow-blue))",
+          color: "#fff",
+          boxShadow: "0 0 25px var(--glow-purple)",
+        }}
       >
         {loading ? (
           <>
@@ -195,13 +341,18 @@ export default function ForoForm({ setPosts }) {
         ) : (
           <>
             <PaperAirplaneIcon className="h-5 w-5 rotate-45" />
-            Publicar
+            Publicar y recibir respuesta ✨
           </>
         )}
       </motion.button>
 
       {botRespondio && (
-        <p className="text-center text-sm text-[#9B6BFF]">✨ EmonicalBot respondió a tu reflexión</p>
+        <p
+          className="text-center text-xs sm:text-sm mt-1"
+          style={{ color: "var(--glow-purple)" }}
+        >
+          ✨ EmonicalBot respondió a tu reflexión. Gracias por compartir 💜
+        </p>
       )}
     </motion.form>
   );
