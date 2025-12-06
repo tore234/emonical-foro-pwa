@@ -6,6 +6,7 @@ import {
   CubeTransparentIcon,
   HeartIcon,
   ArrowDownTrayIcon,
+  ExclamationTriangleIcon,
 } from "@heroicons/react/24/solid";
 
 import { useTheme } from "../../context/ThemeContext";
@@ -52,8 +53,8 @@ const FEATURES = [
   },
   {
     icon: CubeTransparentIcon,
-    title: "Realidad Aumentada",
-    text: "Energías AR según tu emoción.",
+    title: "Realidad Aumentada híbrida",
+    text: "Energías AR según tu emoción en un entorno inmersivo.",
   },
   {
     icon: DevicePhoneMobileIcon,
@@ -200,14 +201,57 @@ export default function DescubrirApp() {
               </span>
             </h2>
 
-            <p
-              className="text-base md:text-lg leading-relaxed max-w-md"
-              style={{ color: "var(--text-soft)" }}
-            >
-              Tu espacio emocional ahora vibra contigo.  
-              Interfaz reactiva según tu estado emocional.  
-              Ambientes neon, animaciones vivas y AR emocional.
-            </p>
+            {/* Descripción + aviso de AR */}
+            <div className="space-y-4">
+              <p
+                className="text-base md:text-lg leading-relaxed max-w-md"
+                style={{ color: "var(--text-soft)" }}
+              >
+                Tu espacio emocional ahora vibra contigo.  
+                Interfaz reactiva según tu estado emocional, ambientes neon,
+                animaciones vivas y una experiencia híbrida entre AR y VR.
+              </p>
+
+              <div
+                className="flex gap-3 items-start rounded-2xl px-4 py-3 text-sm md:text-base"
+                style={{
+                  backgroundColor: isDark
+                    ? "rgba(15,23,42,0.9)"
+                    : "rgba(248,250,252,0.98)",
+                  border: `1px solid ${cardBorder}`,
+                  boxShadow: `0 0 24px ${current.color}33`,
+                }}
+              >
+                <div
+                  className="mt-0.5 flex h-8 w-8 items-center justify-center rounded-full"
+                  style={{
+                    background: `linear-gradient(to bottom right, ${current.color}, #22d3ee)`,
+                  }}
+                >
+                  <ExclamationTriangleIcon className="h-5 w-5 text-white" />
+                </div>
+                <div>
+                  <p>
+                    <span className="font-semibold">
+                      Para un uso óptimo de Emonical,
+                    </span>{" "}
+                    instala:
+                  </p>
+                  <ul className="list-disc list-inside mt-1 space-y-1">
+                    <li>
+                      <strong>APK principal</strong> (app Emonical).
+                    </li>
+                    <li>
+                      <strong>APK de Realidad Aumentada</strong> (escenario híbrido AR / VR).
+                    </li>
+                  </ul>
+                  <p className="mt-2 text-xs md:text-sm opacity-80">
+                    ⚠️ Estos enlaces de descarga son temporales y caducan el{" "}
+                    <strong>12 de diciembre</strong>.
+                  </p>
+                </div>
+              </div>
+            </div>
 
             {/* FEATURES */}
             <div className="grid gap-5">
@@ -257,21 +301,45 @@ export default function DescubrirApp() {
               })}
             </div>
 
-            {/* CTA */}
-            <motion.a
-              href="/emonical.apk"
-              download
-              whileHover={{ scale: 1.08, translateY: -2 }}
-              whileTap={{ scale: 0.97 }}
-              className="inline-flex items-center gap-3 px-9 py-3.5 rounded-full text-white font-semibold mt-4 shadow-xl"
-              style={{
-                background: `linear-gradient(to right, ${current.color}, #22d3ee, #a855f7)`,
-                boxShadow: `0 0 35px ${current.color}`,
-              }}
-            >
-              <ArrowDownTrayIcon className="h-6 w-6" />
-              Descargar APK
-            </motion.a>
+            {/* CTAs con links de Smash */}
+            <div className="flex flex-col sm:flex-row gap-3 mt-4">
+              {/* APK principal */}
+              <motion.a
+                href="https://fromsmash.com/Emonicalapk"
+                target="_blank"
+                rel="noopener noreferrer"
+                whileHover={{ scale: 1.04, translateY: -2 }}
+                whileTap={{ scale: 0.97 }}
+                className="inline-flex flex-1 items-center justify-center gap-3 px-6 py-3.5 rounded-full font-semibold shadow-md border"
+                style={{
+                  backgroundColor: isDark
+                    ? "rgba(15,23,42,0.96)"
+                    : "rgba(255,255,255,0.98)",
+                  borderColor: cardBorder,
+                  color: "var(--text-main)",
+                }}
+              >
+                <ArrowDownTrayIcon className="h-5 w-5" />
+                Descargar APK Emonical
+              </motion.a>
+
+              {/* APK AR (prioritario visualmente) */}
+              <motion.a
+                href="https://fromsmash.com/Emonicalar"
+                target="_blank"
+                rel="noopener noreferrer"
+                whileHover={{ scale: 1.08, translateY: -2 }}
+                whileTap={{ scale: 0.97 }}
+                className="inline-flex flex-1 items-center justify-center gap-3 px-6 py-3.5 rounded-full text-white font-semibold shadow-xl"
+                style={{
+                  background: `linear-gradient(to right, ${current.color}, #22d3ee, #a855f7)`,
+                  boxShadow: `0 0 35px ${current.color}`,
+                }}
+              >
+                <ArrowDownTrayIcon className="h-5 w-5" />
+                Descargar módulo AR (recomendado)
+              </motion.a>
+            </div>
           </div>
 
           {/* ----------------------------- RIGHT SIDE ----------------------------- */}
@@ -303,7 +371,7 @@ export default function DescubrirApp() {
               }}
             />
 
-            {/* LÍNEAS RGB EN LAS ESQUINAS (RELLENO BORDES VACÍOS) */}
+            {/* LÍNEAS RGB EN LAS ESQUINAS */}
             <motion.div
               className="pointer-events-none absolute -top-10 left-6 h-24 w-24 rounded-full"
               style={{
