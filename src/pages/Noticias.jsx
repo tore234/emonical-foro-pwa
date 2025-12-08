@@ -83,7 +83,7 @@ const videosSaludMental = [
   },
   {
     id: "v2",
-    titulo: "Cómo calmar la mente en 5 minutos 🧘",
+    titulo: "Cómo calmar la mente en 2 minutos 🧘",
     url: "https://www.youtube.com/embed/KGBa47k4ag0?si=n-PUoof5JSIvrxIv",
   },
   {
