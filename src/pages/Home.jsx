@@ -165,7 +165,7 @@ export default function Home() {
 
       {/* Logo */}
       <motion.img
-        src="/assets/emonical-logo.png"
+        src="src\assets\emonical-logo-dark.png"
         alt="Logo Emonical"
         loading="lazy"
         width={224}

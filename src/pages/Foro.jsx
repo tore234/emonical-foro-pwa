@@ -279,10 +279,7 @@ export default function Foro() {
         )}
       </div>
 
-      {/* BOT WAKE BUTTON */}
-      <div className="fixed bottom-5 right-5 sm:bottom-6 sm:right-6 z-20">
-        <WakeBotButton />
-      </div>
+      
     </section>
   );
 }
