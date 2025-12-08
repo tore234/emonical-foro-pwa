@@ -1,3 +1,4 @@
+// src/components/Foro/ForoForm.jsx
 import { useState } from "react";
 import { motion } from "framer-motion";
 import {
@@ -28,7 +29,7 @@ const EMOCIONES = [
 ];
 
 // mini estrellas alrededor del formulario
-const FORM_STARS = Array.from({ length: 24 }, () => ({
+const FORM_STARS = Array.from({ length: 32 }, () => ({
   x: Math.random() * 100,
   y: Math.random() * 100,
   size: Math.random() * 2 + 1,
@@ -138,17 +139,6 @@ export default function ForoForm({ setPosts }) {
         color: "var(--text-main)",
       }}
     >
-      {/* halo RGB alrededor */}
-      <motion.div
-        className="pointer-events-none absolute -inset-[1px] rounded-[26px] -z-10 opacity-70"
-        style={{
-          background:
-            "conic-gradient(from_180deg, rgba(167,139,250,0.85), rgba(56,189,248,0.9), rgba(244,114,182,0.9), rgba(167,139,250,0.85))",
-        }}
-        animate={{ rotate: [0, 360] }}
-        transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
-      />
-
       {/* estrellitas internas */}
       {FORM_STARS.map((star, i) => (
         <motion.div
@@ -178,7 +168,10 @@ export default function ForoForm({ setPosts }) {
             className="h-6 w-6"
             style={{ color: "var(--glow-purple)" }}
           />
-          <h3 className="text-lg sm:text-xl font-bold">
+          <h3
+            className="text-lg sm:text-xl font-bold"
+            style={{ color: "var(--text-main)" }}
+          >
             Comparte tu experiencia 💬
           </h3>
         </div>
@@ -188,7 +181,7 @@ export default function ForoForm({ setPosts }) {
           <span
             className="px-3 py-1 rounded-full border backdrop-blur-xl flex items-center gap-2"
             style={{
-              background: "var(--input-bg)",
+              background: "var(--chip-bg, var(--input-bg))",
               borderColor: "var(--card-border)",
               color: "var(--text-soft)",
             }}
@@ -210,7 +203,10 @@ export default function ForoForm({ setPosts }) {
       <div className="grid gap-3 sm:gap-4 relative">
         {/* Autor */}
         <div className="grid gap-1">
-          <label className="text-[11px] sm:text-xs font-semibold tracking-wide">
+          <label
+            className="text-[11px] sm:text-xs font-semibold tracking-wide"
+            style={{ color: "var(--text-soft)" }}
+          >
             Nombre
             <span style={{ color: "var(--text-soft)" }}> (opcional)</span>
           </label>
@@ -231,7 +227,10 @@ export default function ForoForm({ setPosts }) {
 
         {/* Título */}
         <div className="grid gap-1">
-          <label className="text-[11px] sm:text-xs font-semibold tracking-wide">
+          <label
+            className="text-[11px] sm:text-xs font-semibold tracking-wide"
+            style={{ color: "var(--text-soft)" }}
+          >
             Título de tu publicación
           </label>
           <input
@@ -259,42 +258,44 @@ export default function ForoForm({ setPosts }) {
           </p>
 
           <div className="flex flex-wrap gap-2">
-            {EMOCIONES.map((emo) => (
-              <motion.button
-                key={emo.id}
-                type="button"
-                whileTap={{ scale: 0.93 }}
-                onClick={() => setEmocion(emo.id)}
-                className="flex items-center gap-2 px-3 py-2 rounded-2xl text-[11px] sm:text-xs transition border"
-                style={{
-                  background:
-                    emocion === emo.id
+            {EMOCIONES.map((emo) => {
+              const isActive = emocion === emo.id;
+              return (
+                <motion.button
+                  key={emo.id}
+                  type="button"
+                  whileTap={{ scale: 0.93 }}
+                  onClick={() => setEmocion(emo.id)}
+                  className="flex items-center gap-2 px-3 py-2 rounded-2xl text-[11px] sm:text-xs transition border"
+                  style={{
+                    background: isActive
                       ? "var(--glow-purple)"
                       : "var(--input-bg)",
-                  borderColor: "var(--card-border)",
-                  color: emocion === emo.id ? "#fff" : "var(--text-main)",
-                  boxShadow:
-                    emocion === emo.id
+                    borderColor: "var(--card-border)",
+                    color: isActive ? "#fff" : "var(--text-main)",
+                    boxShadow: isActive
                       ? "0 0 14px var(--glow-purple)"
                       : "none",
-                }}
-              >
-                <img
-                  src={emo.image}
-                  alt={emo.label}
-                  className="w-7 h-7 rounded-full"
-                />
-                <span>
-                  {emo.emoji} {emo.label}
-                </span>
-              </motion.button>
-            ))}
+                  }}
+                >
+                  <img
+                    src={emo.image}
+                    alt={emo.label}
+                    className="w-7 h-7 rounded-full"
+                  />
+                  <span>{emo.emoji} {emo.label}</span>
+                </motion.button>
+              );
+            })}
           </div>
         </div>
 
         {/* Texto principal */}
         <div className="grid gap-1 mt-2">
-          <label className="text-[11px] sm:text-xs font-semibold tracking-wide">
+          <label
+            className="text-[11px] sm:text-xs font-semibold tracking-wide"
+            style={{ color: "var(--text-soft)" }}
+          >
             Cuéntanos lo que llevas dentro 💭
           </label>
           <textarea

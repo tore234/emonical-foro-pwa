@@ -177,7 +177,7 @@ export default function DescubrirApp() {
                 className="block mt-1 text-transparent bg-gradient-to-r bg-clip-text"
                 style={{ backgroundImage: `linear-gradient(to right, ${current.color}, #22d3ee, #a855f7)` }}
               >
-                NeoGlow
+                Chat & Bienestar
               </span>
             </h2>
 

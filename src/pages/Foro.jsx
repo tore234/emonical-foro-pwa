@@ -12,8 +12,8 @@ import {
   SparklesIcon,
 } from "@heroicons/react/24/solid";
 
-// 🌌 Estrellas de fondo
-const STARS = Array.from({ length: 40 }, () => ({
+// 🌌 Estrellas de fondo (↑ aumenté la cantidad)
+const STARS = Array.from({ length: 70 }, () => ({
   x: Math.random() * 100,
   y: Math.random() * 100,
   size: Math.random() * 2 + 1,
@@ -200,19 +200,14 @@ export default function Foro() {
           animate={{ opacity: 1 }}
           transition={{ delay: 0.3 }}
         >
-          Comparte tus emociones, reflexiones y encuentra apoyo emocional  
+          Comparte tus emociones, reflexiones y encuentra apoyo emocional
           dentro de una comunidad segura, empática y luminosa 💜
         </motion.p>
       </header>
 
       {/* ================== CONTENIDO PRINCIPAL ================== */}
       <div className="relative z-10 space-y-12 sm:space-y-14">
-        {/* Marco RGB suave detrás del formulario */}
-        <motion.div
-          className="absolute inset-x-2 sm:inset-x-6 -top-4 h-3/5 rounded-[32px] bg-[conic-gradient(from_180deg,rgba(167,139,250,0.85),rgba(56,189,248,0.85),rgba(244,114,182,0.85),rgba(167,139,250,0.85))] opacity-60 blur-[2px] -z-10"
-          animate={{ rotate: [0, 360] }}
-          transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
-        />
+        {/* (Quité el marco RGB giratorio detrás del formulario) */}
 
         {/* Formulario */}
         <motion.div
@@ -278,8 +273,6 @@ export default function Foro() {
           </motion.div>
         )}
       </div>
-
-      
     </section>
   );
 }

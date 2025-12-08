@@ -33,8 +33,7 @@ export default function PerfilCard({ user }) {
   const isAnon = user.isAnonymous;
   const email = user.email || "Invitado";
   const name =
-    user.displayName ||
-    (!isAnon ? email.split("@")[0] : "Usuario invitado");
+    user.displayName || (!isAnon ? email.split("@")[0] : "Usuario invitado");
 
   // 🔄 Cargar avatar guardado en localStorage
   useEffect(() => {
@@ -59,20 +58,29 @@ export default function PerfilCard({ user }) {
   }, [avatarSeleccionado]);
 
   // Avatar que se muestra en la tarjeta
-  const avatarVisible =
-    avatarSeleccionado || user.photoURL || null;
+  const avatarVisible = avatarSeleccionado || user.photoURL || null;
 
   return (
     <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
-      className="relative overflow-hidden rounded-3xl bg-white/85 border border-white/70 shadow-[0_8px_30px_rgba(178,157,217,0.25)] p-6 md:p-7 space-y-5"
+      className="
+        relative overflow-hidden rounded-3xl 
+        border shadow-[0_8px_30px_rgba(0,0,0,0.35)]
+        p-6 md:p-7 space-y-5 backdrop-blur-2xl
+      "
+      style={{
+        background: "var(--card-bg)",
+        borderColor: "var(--card-border)",
+        color: "var(--text-main)",
+      }}
     >
       {/* halo suave de fondo */}
       <motion.div
-        className="pointer-events-none absolute -top-10 -right-10 h-32 w-32 rounded-full bg-[#B29DD9]/40 blur-3xl opacity-70"
-        animate={{ opacity: [0.4, 0.7, 0.4] }}
+        className="pointer-events-none absolute -top-10 -right-10 h-32 w-32 rounded-full blur-3xl opacity-70"
+        style={{ background: "var(--glow-purple)" }}
+        animate={{ opacity: [0.35, 0.7, 0.35] }}
         transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
       />
 
@@ -84,7 +92,7 @@ export default function PerfilCard({ user }) {
               <img
                 src={avatarVisible}
                 alt="Avatar emocional"
-                className="h-12 w-12 rounded-full object-cover border border-white/70"
+                className="h-12 w-12 rounded-full object-cover border border-white/60"
               />
             ) : (
               <UserCircleIcon className="h-10 w-10 text-white drop-shadow" />
@@ -93,13 +101,22 @@ export default function PerfilCard({ user }) {
         </div>
 
         <div className="flex-1">
-          <p className="text-xs uppercase tracking-wide text-[#8A8FA6] font-semibold">
+          <p
+            className="text-xs uppercase tracking-wide font-semibold"
+            style={{ color: "var(--text-soft)" }}
+          >
             Cuenta activa
           </p>
-          <h3 className="text-lg font-semibold text-[#22223B] leading-snug">
+          <h3
+            className="text-lg font-semibold leading-snug"
+            style={{ color: "var(--text-main)" }}
+          >
             {name}
           </h3>
-          <p className="text-xs text-gray-500 mt-0.5">
+          <p
+            className="text-[11px] mt-0.5"
+            style={{ color: "var(--text-soft)" }}
+          >
             {isAnon
               ? "Modo invitado — tus datos no se guardan permanentemente."
               : "Tu sesión está vinculada a este correo."}
@@ -108,19 +125,37 @@ export default function PerfilCard({ user }) {
       </div>
 
       {/* DATOS DE LA CUENTA */}
-      <div className="relative z-10 space-y-2 rounded-2xl bg-[#F7F5FF]/80 border border-[#E0D7F8]/70 px-4 py-3">
+      <div
+        className="relative z-10 space-y-2 rounded-2xl px-4 py-3 border"
+        style={{
+          background: "var(--chip-bg, rgba(0,0,0,0.12))",
+          borderColor: "var(--card-border)",
+        }}
+      >
         {!isAnon && (
-          <div className="flex items-center gap-2 text-sm text-gray-700">
-            <EnvelopeIcon className="h-4 w-4 text-[#B29DD9]" />
+          <div
+            className="flex items-center gap-2 text-sm"
+            style={{ color: "var(--text-main)" }}
+          >
+            <EnvelopeIcon
+              className="h-4 w-4"
+              style={{ color: "var(--glow-purple)" }}
+            />
             <span className="truncate">{email}</span>
           </div>
         )}
 
-        <div className="flex items-center gap-2 text-xs text-gray-600">
-          <IdentificationIcon className="h-4 w-4 text-[#B29DD9]" />
+        <div
+          className="flex items-center gap-2 text-xs"
+          style={{ color: "var(--text-soft)" }}
+        >
+          <IdentificationIcon
+            className="h-4 w-4"
+            style={{ color: "var(--glow-purple)" }}
+          />
           <span>
             Tipo de cuenta:{" "}
-            <span className="font-semibold">
+            <span className="font-semibold" style={{ color: "var(--text-main)" }}>
               {isAnon ? "Invitada" : "Registrada"}
             </span>
           </span>
@@ -129,10 +164,16 @@ export default function PerfilCard({ user }) {
 
       {/* 🔮 Selector de emoción / avatar */}
       <div className="relative z-10">
-        <p className="text-xs font-semibold text-[#8A8FA6] mb-2">
+        <p
+          className="text-xs font-semibold mb-2"
+          style={{ color: "var(--text-soft)" }}
+        >
           Elige la emoción de tu avatar
         </p>
-        <p className="text-[11px] text-gray-500 mb-3">
+        <p
+          className="text-[11px] mb-3"
+          style={{ color: "var(--text-soft)" }}
+        >
           Selecciona cómo quieres que se vea tu burbujita en Emonical Foro 💫
         </p>
 
@@ -146,7 +187,7 @@ export default function PerfilCard({ user }) {
                 onClick={() => setAvatarSeleccionado(item.src)}
                 className={`relative rounded-full p-[2px] transition-all ${
                   isActive
-                    ? "ring-2 ring-offset-2 ring-[#B29DD9] ring-offset-white"
+                    ? "ring-2 ring-offset-2 ring-[#B29DD9] ring-offset-transparent"
                     : "hover:ring-2 hover:ring-offset-2 hover:ring-[#C5D4F5]"
                 }`}
               >
@@ -155,7 +196,10 @@ export default function PerfilCard({ user }) {
                   alt={item.label}
                   className="h-10 w-10 rounded-full object-cover bg-[#F3EEFF]"
                 />
-                <span className="block text-[10px] text-center mt-1 text-gray-600">
+                <span
+                  className="block text-[10px] text-center mt-1"
+                  style={{ color: "var(--text-soft)" }}
+                >
                   {item.label}
                 </span>
               </button>
@@ -165,9 +209,16 @@ export default function PerfilCard({ user }) {
       </div>
 
       {/* Mensaje amable */}
-      <p className="relative z-10 text-[11px] md:text-xs text-gray-500 mt-1">
+      <p
+        className="relative z-10 text-[11px] md:text-xs mt-1"
+        style={{ color: "var(--text-soft)" }}
+      >
         🎈 Desde aquí podrás gestionar tu sesión y, muy pronto, ver tu
-        actividad dentro de <span className="font-semibold">Emonical Foro</span>.
+        actividad dentro de{" "}
+        <span className="font-semibold" style={{ color: "var(--text-main)" }}>
+          Emonical Foro
+        </span>
+        .
       </p>
     </motion.div>
   );
