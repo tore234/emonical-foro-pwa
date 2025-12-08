@@ -3,6 +3,10 @@ import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { useTheme } from "../context/ThemeContext";
 import { Link } from "react-router-dom";
 
+// ✅ importa las dos variantes del logo
+import logoLight from "../assets/emonical-logo-light.png"; // se usa en dark mode
+import logoDark from "../assets/emonical-logo-dark.png";   // se usa en light mode
+
 /* ---------------------- Helpers ---------------------- */
 function makeStars(count) {
   return Array.from({ length: count }, () => ({
@@ -33,8 +37,12 @@ export default function Home() {
   const isDark = theme === "dark";
   const reduceMotion = useReducedMotion();
 
+  // ✅ logo por tema
+  const logoSrc = isDark ? logoLight : logoDark;
+
   // Menos partículas en móvil
-  const isMobile = typeof window !== "undefined" ? window.innerWidth < 640 : true;
+  const isMobile =
+    typeof window !== "undefined" ? window.innerWidth < 640 : true;
   const STARS = useMemo(() => makeStars(isMobile ? 16 : 36), [isMobile]);
 
   // Frases: intervalo pausado si reduceMotion para ahorrar ciclos
@@ -49,7 +57,7 @@ export default function Home() {
 
   const currentPhrase = PHRASES[phraseIndex];
 
-  /* ===== Estilos memorizados por tema (evita crear objetos cada render) ===== */
+  /* ===== Estilos memorizados por tema ===== */
   const styles = useMemo(() => {
     const bgGradient = isDark
       ? "linear-gradient(to bottom right,#1B1135,#24183F,#0D091C)"
@@ -89,9 +97,12 @@ export default function Home() {
       style={{ color: styles.textMain }}
     >
       {/* Fondo */}
-      <div className="absolute inset-0" style={{ backgroundImage: styles.bgGradient }} />
+      <div
+        className="absolute inset-0"
+        style={{ backgroundImage: styles.bgGradient }}
+      />
 
-      {/* Aurora principal (blur reducido) */}
+      {/* Aurora principal */}
       {animate ? (
         <motion.div
           className="absolute inset-0 blur-[100px] sm:blur-[140px]"
@@ -121,7 +132,7 @@ export default function Home() {
         />
       )}
 
-      {/* Estrellas (sin box-shadow pesado) */}
+      {/* Estrellas */}
       {animate &&
         STARS.map((s, i) => (
           <motion.div
@@ -143,7 +154,7 @@ export default function Home() {
           />
         ))}
 
-      {/* Constelaciones (sin sombras difusas) */}
+      {/* Constelaciones */}
       {animate &&
         CONSTELLATION_LINES.map((line, i) => (
           <motion.div
@@ -159,15 +170,21 @@ export default function Home() {
                 "linear-gradient(to right, rgba(129,140,248,0), rgba(129,140,248,0.9), rgba(56,189,248,0))",
             }}
             animate={{ opacity: [0.25, 1, 0.25] }}
-            transition={{ duration: 9, delay: i * 1.2, repeat: Infinity, ease: "easeInOut" }}
+            transition={{
+              duration: 9,
+              delay: i * 1.2,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
           />
         ))}
 
-      {/* Logo */}
+      {/* ✅ Logo por tema (sin espacio extra en src) */}
       <motion.img
-        src="/assets/emonical-logo.png "
+        src={logoSrc}
         alt="Logo Emonical"
         loading="lazy"
+        decoding="async"
         width={224}
         height={96}
         initial={{ opacity: 0, y: -20 }}
@@ -176,7 +193,7 @@ export default function Home() {
         className="w-44 md:w-56 mb-6 relative z-10"
       />
 
-      {/* Avatar flotante (apagado si reduceMotion) */}
+      {/* Avatar flotante */}
       {animate ? (
         <motion.img
           src="/assets/emonical-avatar.png"
@@ -184,7 +201,11 @@ export default function Home() {
           loading="lazy"
           width={256}
           height={256}
-          animate={{ y: [0, -16, 0], rotate: [0, 2, -2, 0], scale: [1, 1.03, 1] }}
+          animate={{
+            y: [0, -16, 0],
+            rotate: [0, 2, -2, 0],
+            scale: [1, 1.03, 1],
+          }}
           transition={{ duration: 3.2, repeat: Infinity, ease: "easeInOut" }}
           className="w-48 md:w-64 relative z-10"
         />
@@ -206,14 +227,21 @@ export default function Home() {
         transition={{ delay: 0.25, duration: 0.6 }}
         className="mt-8 max-w-xl relative z-10"
       >
-        <h1 className="text-4xl md:text-6xl font-extrabold leading-snug mb-4" style={{ color: styles.textMain }}>
+        <h1
+          className="text-4xl md:text-6xl font-extrabold leading-snug mb-4"
+          style={{ color: styles.textMain }}
+        >
           Bienvenido a{" "}
           <span className="bg-gradient-to-r from-[#A855F7] to-[#22D3EE] bg-clip-text text-transparent">
             Emonical Foro
           </span>
         </h1>
-        <p className="text-base md:text-lg leading-relaxed opacity-95" style={{ color: styles.textSub }}>
-          Un espacio seguro donde puedes expresarte, conectar con otros y encontrar apoyo emocional cuando lo necesites 💜.
+        <p
+          className="text-base md:text-lg leading-relaxed opacity-95"
+          style={{ color: styles.textSub }}
+        >
+          Un espacio seguro donde puedes expresarte, conectar con otros y
+          encontrar apoyo emocional cuando lo necesites 💜.
         </p>
       </motion.div>
 
@@ -224,7 +252,6 @@ export default function Home() {
         animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: 0.5, duration: 0.45 }}
       >
-        {/* Foro */}
         <Link
           to="/foro"
           className="group relative inline-flex items-center justify-center px-9 py-3.5 rounded-2xl text-lg font-semibold text-white overflow-hidden transition-all"
@@ -241,7 +268,6 @@ export default function Home() {
           <span className="relative z-10">Entrar al Foro</span>
         </Link>
 
-        {/* Descubrir */}
         <Link
           to="/descubrir"
           className="group relative inline-flex items-center justify-center px-9 py-3.5 rounded-2xl text-lg font-semibold transition-all duration-300"
@@ -258,7 +284,7 @@ export default function Home() {
         </Link>
       </motion.div>
 
-      {/* Frase final (animación barata) */}
+      {/* Frase final */}
       <div className="mt-10 mb-4 relative z-10">
         <AnimatePresence mode="wait">
           <motion.p
@@ -272,11 +298,20 @@ export default function Home() {
             <motion.span
               className="bg-clip-text text-transparent font-medium"
               style={{
-                backgroundImage: "linear-gradient(90deg,#A855F7,#22D3EE,#F97316,#A855F7)",
+                backgroundImage:
+                  "linear-gradient(90deg,#A855F7,#22D3EE,#F97316,#A855F7)",
                 backgroundSize: "300% 300%",
               }}
-              animate={animate ? { backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"] } : undefined}
-              transition={animate ? { duration: 10, repeat: Infinity, ease: "linear" } : undefined}
+              animate={
+                animate
+                  ? { backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"] }
+                  : undefined
+              }
+              transition={
+                animate
+                  ? { duration: 10, repeat: Infinity, ease: "linear" }
+                  : undefined
+              }
             >
               “{currentPhrase}”
             </motion.span>
