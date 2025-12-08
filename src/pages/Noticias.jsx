@@ -78,7 +78,7 @@ const noticiasLocales = [
 const videosSaludMental = [
   {
     id: "v1",
-    titulo: "Meditación guiada para ansiedad 🌿",
+    titulo: "Levánte y anda  🌿",
     url: "https://www.youtube.com/embed/_6Xp03Lwm6A?si=lQqkYSeNnZo5FVRr",
   },
   {
