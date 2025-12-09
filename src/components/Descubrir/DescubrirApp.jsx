@@ -37,7 +37,7 @@ const EMOTIONS = [
 const PREVIEWS = [{ src: mockHome }, { src: mockEmociones }, { src: mockChat }, { src: mockPerfil }];
 
 const FEATURES = [
-  { icon: HeartIcon, title: "Bienestar que vibra contigo", text: "Ambientes cósmicos y ejercicios neon guiados." },
+  { icon: HeartIcon, title: "Bienestar que vibra contigo", text: "Ambientes cósmicos y ejercicios  guiados." },
   { icon: CubeTransparentIcon, title: "Realidad Aumentada híbrida", text: "Energías AR según tu emoción en un entorno inmersivo." },
   { icon: DevicePhoneMobileIcon, title: "Experiencia fluida", text: "Funciona como PWA o APK, rápida y ligera." },
 ];
@@ -183,7 +183,7 @@ export default function DescubrirApp() {
 
             <div className="space-y-4">
               <p className="text-base md:text-lg leading-relaxed max-w-md" style={{ color: "var(--text-soft)" }}>
-                Tu espacio emocional ahora vibra contigo. Interfaz reactiva según tu estado emocional, ambientes neon,
+                Tu espacio emocional ahora vibra contigo. Interfaz reactiva según tu estado emocional, ambientes tranquilizadores,
                 animaciones vivas y una experiencia híbrida entre AR y VR.
               </p>
 
@@ -256,7 +256,7 @@ export default function DescubrirApp() {
             {/* CTAs */}
             <div className="flex flex-col sm:flex-row gap-3 mt-4">
               <a
-                href="https://fromsmash.com/Emonicalapk"
+                href="https://fromsmash.com/Emonical-estable"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex flex-1 items-center justify-center gap-3 px-6 py-3.5 rounded-full font-semibold shadow-md border transition active:scale-95"
@@ -271,7 +271,7 @@ export default function DescubrirApp() {
               </a>
 
               <a
-                href="https://fromsmash.com/Emonicalar"
+                href="https://fromsmash.com/AR-app-eestable"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex flex-1 items-center justify-center gap-3 px-6 py-3.5 rounded-full text-white font-semibold shadow-xl transition active:scale-95"
